@@ -4,7 +4,9 @@ from helpers.helpers import find_in_collection
 from nba_client.models.team_model import TeamModel
 
 
-class Team:
+class ApiTeam:
+    """ Class representing a team taken from NBA api client """
+
     _teams_cached = None
 
     def __init__(self, abbreviation: str):
@@ -19,7 +21,7 @@ class Team:
         return team
 
     @property
-    def abbreviation(self):
+    def abbreviation(self) -> str:
         return self._team.abbreviation
 
     @property
@@ -56,11 +58,11 @@ class Team:
         return None
 
     @classmethod
-    def get_teams(cls):
+    def get_teams(cls) -> [dict]:
         if cls._teams_cached is None:
             cls._teams_cached = teams.get_teams()
         return cls._teams_cached
 
     @classmethod
-    def get_abbreviations(cls):
+    def get_abbreviations(cls) -> [str]:
         return [team.get('abbreviation') for team in cls.get_teams()]

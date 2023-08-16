@@ -7,7 +7,9 @@ from helpers.helpers import lists_to_dict, convert_to_metric
 from nba_client.models.player_model import PlayerModel
 
 
-class Player:
+class ApiPlayer:
+    """ Class representing a player taken from NBA api client """
+
     _data = None
 
     def __init__(self, first_name: str, last_name: str):
@@ -33,55 +35,55 @@ class Player:
         return self._info.id
 
     @property
-    def school(self):
+    def school(self) -> str:
         return self._info.school
 
     @property
-    def birth_date(self):
+    def birth_date(self) -> datetime:
         return self._info.birth_date
 
     @property
-    def country(self):
+    def country(self) -> str:
         return self._info.country
 
     @property
-    def position(self):
+    def position(self) -> str:
         return self._info.position
 
     @property
-    def current_team_abbreviation(self):
+    def current_team_abbreviation(self) -> str:
         return self._info.current_team_abbreviation
 
     @property
-    def current_number(self):
+    def current_number(self) -> int:
         return self._info.current_number
 
     @property
-    def height(self):
+    def height(self) -> int:
         return self._info.height
 
     @property
-    def weight(self):
+    def weight(self) -> int:
         return self._info.weight
 
     @property
-    def first_season_played(self):
+    def first_season_played(self) -> int:
         return self._info.first_season_played
 
     @property
-    def age(self):
+    def age(self) -> int:
         return self._info.age
 
     @property
-    def draft_year(self):
+    def draft_year(self) -> int:
         return self._info.draft_year
 
     @property
-    def draft_number(self):
+    def draft_number(self) -> int:
         return self._info.draft_number
 
     @staticmethod
-    def _get_player_by_name(first_name: str, last_name: str):
+    def _get_player_by_name(first_name: str, last_name: str) -> PlayerModel:
         players_found = players.find_players_by_full_name(f'{first_name} {last_name}')
         assert players_found, f"No player found: {first_name} {last_name}"
         assert len(

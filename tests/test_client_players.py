@@ -1,6 +1,6 @@
 import pytest
 
-from nba_client.player import Player
+from nba_client.api_player import ApiPlayer
 
 
 @pytest.fixture
@@ -14,7 +14,7 @@ def last_name():
 
 
 def test_client_players(first_name, last_name):
-    player = Player(first_name, last_name)
+    player = ApiPlayer(first_name, last_name)
     assert player.first_name == first_name
     assert player.last_name == last_name
     assert player.is_active

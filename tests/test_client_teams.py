@@ -1,9 +1,9 @@
-from nba_client.team import Team
+from nba_client.api_team import ApiTeam
 
 
 def test_client_teams():
-    assert len(Team.get_teams()) > 0
-    lakers = Team.get_team('LAL')
+    assert len(ApiTeam.get_teams()) > 0
+    lakers = ApiTeam.get_team('LAL')
     assert lakers
     assert lakers.name == "Los Angeles Lakers"
     assert lakers.abbreviation == 'LAL'
@@ -12,5 +12,5 @@ def test_client_teams():
     assert lakers.state == 'California'
     assert lakers.year_founded == 1948
     assert lakers.id
-    assert Team.get_team('LOL') is None
+    assert ApiTeam.get_team('LOL') is None
 

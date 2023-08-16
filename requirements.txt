@@ -1,0 +1,10 @@
+certifi==2023.7.22
+charset-normalizer==3.2.0
+idna==3.4
+nba-api==1.2.1
+numpy==1.25.2
+psycopg2==2.9.7
+requests==2.31.0
+SQLAlchemy==2.0.20
+typing_extensions==4.7.1
+urllib3==2.0.4

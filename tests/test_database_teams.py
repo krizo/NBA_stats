@@ -1,0 +1,39 @@
+import pytest
+
+from db.database import Database
+from db.db_schema import Team
+from helpers.helpers import assert_equals
+from nba_client.api_team import ApiTeam
+from nba_client.models.team_model import TeamModel
+
+
+@pytest.fixture
+def api_team() -> TeamModel:
+    return ApiTeam.get_team('LAL')
+
+
+def setup():
+    Database.recreate_database()
+
+
+def assert_team(actual: Team, expected: TeamModel):
+    assert_equals(actual.team_id, expected.id, 'Team id')
+    assert_equals(actual.name, expected.name, 'Team name')
+    assert_equals(actual.city, expected.city, 'Team city')
+    assert_equals(actual.state, expected.state, 'Team state')
+    assert_equals(actual.nickname, expected.nickname, 'Team nickname')
+    assert_equals(actual.short_name, expected.abbreviation, 'Team short name')
+    assert_equals(actual.year_founded, expected.year_founded, 'Team year founded')
+    assert actual.created_at
+    assert actual.updated_at
+
+
+def test_database_teams_create(api_team):
+    team = Team(team_id=api_team.id, name=api_team.name, short_name=api_team.abbreviation, nickname=api_team.nickname,
+                state=api_team.state, city=api_team.city, year_founded=api_team.year_founded)
+    team.persist()
+
+
+def test_database_teams_fetch(api_team):
+    actual_team = Team.fetch_by_id(api_team.id)
+    assert_team(actual_team, api_team)

@@ -3,7 +3,6 @@ import pytest
 from db.database import Database
 from db.db_schema import Team
 from helpers.helpers import assert_equals
-from helpers.logger import Log
 from nba_client.api_team import ApiTeam
 from nba_client.models.team_model import TeamModel
 
@@ -30,8 +29,7 @@ def assert_team(actual: Team, expected: TeamModel):
 
 
 def test_database_teams_create(api_team):
-    team = Team(id=api_team.id, name=api_team.name, short_name=api_team.abbreviation, nickname=api_team.nickname,
-                state=api_team.state, city=api_team.city, year_founded=api_team.year_founded)
+    team = Team.create_from_api_model(api_team)
     team.persist()
 
 

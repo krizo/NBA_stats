@@ -82,6 +82,17 @@ class ApiPlayer:
     def draft_number(self) -> int:
         return self._info.draft_number
 
+    @property
+    def id(self) -> int:
+        return self._info.id
+
+    @property
+    def current_team_id(self) -> int:
+        return self._info.current_team_id
+
+    def get_player(self):
+        return self._get_player_by_name(self.first_name, self.last_name)
+
     @staticmethod
     def _get_player_by_name(first_name: str, last_name: str) -> PlayerModel:
         players_found = players.find_players_by_full_name(f'{first_name} {last_name}')
@@ -96,6 +107,7 @@ class ApiPlayer:
         player_data['country'] = additional_data['COUNTRY']
         player_data['position'] = additional_data['POSITION']
         player_data['current_team_abbreviation'] = additional_data['TEAM_ABBREVIATION']
+        player_data['current_team_id'] = int(additional_data['TEAM_ID'])
         player_data['current_number'] = int(additional_data['JERSEY'])
         player_data['position'] = additional_data['POSITION']
         player_data['draft_year'] = int(additional_data['DRAFT_YEAR'])

@@ -5,6 +5,8 @@ from sqlalchemy import Column, Integer, DateTime, String, ForeignKey, Boolean
 from sqlalchemy.orm import declarative_base
 
 from helpers.logger import Log
+from nba_client.api_player import ApiPlayer
+from nba_client.api_team import ApiTeam
 
 Base = declarative_base()
 
@@ -41,24 +43,46 @@ class Team(Base, Model):
         Log.info(f"Fetching team by id: {team_id}")
         return Database.fetch_one(Team, Team.id == team_id)
 
+    @staticmethod
+    def create_from_api_model(api_model: ApiTeam):
+        return Team(id=api_model.id, name=api_model.name, short_name=api_model.abbreviation,
+                    nickname=api_model.nickname, state=api_model.state, city=api_model.city,
+                    year_founded=api_model.year_founded)
 
-class Player(Base):
+
+@dataclass
+class Player(Base, Model):
     __tablename__ = 'players'
 
-    id = Column(Integer(), primary_key=True)
-    team_id = Column(Integer(), ForeignKey('teams.id'))
-    created_on = Column(DateTime(), default=datetime.now)
-    updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
-    first_name = Column(String(128))
-    last_name = Column(String(128))
-    is_active = Column(Boolean())
-    school = Column(String(256))
-    birth_date = Column(DateTime())
-    age = Column(Integer())
-    country = Column(String(16))
-    number = Column(Integer())
-    weight = Column(Integer())
-    height = Column(Integer())
-    first_season = Column(Integer())
-    draft_year = Column(Integer())
-    draft_number = Column(Integer())
+    id: int = Column(Integer(), primary_key=True)
+    team_id: int = Column(Integer(), ForeignKey('teams.id'))
+    created_at: datetime = Column(DateTime(), default=datetime.now)
+    updated_at: datetime = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
+    first_name: str = Column(String(128))
+    last_name: str = Column(String(128))
+    is_active: bool = Column(Boolean())
+    school: str = Column(String(256))
+    birth_date: datetime = Column(DateTime())
+    age: int = Column(Integer())
+    country: str = Column(String(16))
+    number: int = Column(Integer())
+    weight: int = Column(Integer())
+    height: int = Column(Integer())
+    first_season: int = Column(Integer())
+    draft_year: int = Column(Integer())
+    draft_number: int = Column(Integer())
+
+    @staticmethod
+    def create_from_api_model(api_model: ApiPlayer):
+        return Player(id=api_model.id, team_id=api_model.current_team_id, first_name=api_model.first_name,
+                      last_name=api_model.last_name, is_active=api_model.is_active, school=api_model.school,
+                      birth_date=api_model.birth_date, age=api_model.age, country=api_model.country,
+                      number=api_model.current_number, weight=api_model.weight, height=api_model.height,
+                      first_season=api_model.first_season_played, draft_year=api_model.draft_year,
+                      draft_number=api_model.draft_number)
+
+    @staticmethod
+    def fetch_by_id(player_id: int) -> "Player":
+        from db.database import Database
+        Log.info(f"Fetching player by id: {player_id}")
+        return Database.fetch_one(Player, Player.id == player_id)

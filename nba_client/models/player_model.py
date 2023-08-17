@@ -17,6 +17,7 @@ class PlayerModel:
     position: str
     current_number: int
     current_team_abbreviation: str
+    current_team_id: int
     first_season_played: int
     draft_year: int
     draft_number: int

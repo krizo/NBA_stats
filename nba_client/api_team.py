@@ -49,7 +49,7 @@ class ApiTeam:
         return self._team.year_founded
 
     @classmethod
-    def get_team(cls, abbreviation: str) -> TeamModel:
+    def get_team(cls, abbreviation: str) -> TeamModel or None:
         team = find_in_collection(collection=cls.get_teams(), attribute='abbreviation', expected_value=abbreviation)
         if team:
             return TeamModel(id=team.get('id'), abbreviation=team.get('abbreviation'), name=team.get('full_name'),

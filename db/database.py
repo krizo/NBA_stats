@@ -2,6 +2,9 @@ from typing import Any
 
 from sqlalchemy import BinaryExpression
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.base import instance_dict
+
+from helpers.logger import Log
 
 
 class Database:
@@ -37,9 +40,18 @@ class Database:
             session.flush()
 
     @classmethod
-    def fetch_one(cls, klass: object, kwargs):
+    def update(cls, existing_object: object, updated_object: object):
         with Session(cls.get_engine()) as session:
-            query = session.query(klass)
+            existing_record = session.query(type(existing_object)).get(existing_object.id)
+            if existing_record:
+                for key, value in instance_dict(updated_object).items():
+                    setattr(existing_record, key, value)
+            session.commit()
+
+    @classmethod
+    def fetch_one(cls, model: object, kwargs):
+        with Session(cls.get_engine()) as session:
+            query = session.query(model)
             return query.filter(kwargs).first()
 
     @classmethod

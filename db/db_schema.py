@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, DateTime, String, ForeignKey, Boolean
 from sqlalchemy.orm import declarative_base
 
-from db.database import Database
+from helpers.logger import Log
 
 Base = declarative_base()
 
@@ -14,12 +14,18 @@ class Model:
         from db.database import Database
         Database.insert(self)
 
+    def update(self, updated_record: object):
+        from db.database import Database
+        Log.info(f"Updating {self.__table__} record by id: {updated_record.id}")
+        Log.info(f"\tUpdated model: {updated_record}")
+        Database.update(self, updated_record)
+
 
 @dataclass
 class Team(Base, Model):
     __tablename__ = 'teams'
 
-    team_id: int = Column(Integer(), primary_key=True, nullable=False, index=True)
+    id: int = Column(Integer(), primary_key=True, nullable=False, index=True)
     created_at: datetime = Column(DateTime(), default=datetime.now)
     updated_at: datetime = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
     name: str = Column(String(128), nullable=False, index=True)
@@ -31,14 +37,16 @@ class Team(Base, Model):
 
     @staticmethod
     def fetch_by_id(team_id: int) -> "Team":
-        return Database.fetch_one(Team, Team.team_id == team_id)
+        from db.database import Database
+        Log.info(f"Fetching team by id: {team_id}")
+        return Database.fetch_one(Team, Team.id == team_id)
 
 
 class Player(Base):
     __tablename__ = 'players'
 
-    player_id = Column(Integer(), primary_key=True)
-    team_id = Column(Integer(), ForeignKey('teams.team_id'))
+    id = Column(Integer(), primary_key=True)
+    team_id = Column(Integer(), ForeignKey('teams.id'))
     created_on = Column(DateTime(), default=datetime.now)
     updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
     first_name = Column(String(128))

@@ -1,5 +1,6 @@
 from typing import Any
 
+from psycopg2 import IntegrityError
 from sqlalchemy import BinaryExpression
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.base import instance_dict
@@ -36,7 +37,11 @@ class Database:
     def insert(cls, record: Any):
         with Session(cls.get_engine()) as session:
             session.add(record)
-            session.commit()
+            try:
+                session.commit()
+            except Exception as ex:
+                if ex.orig.pgcode == 23505:
+                    Log.warning(f"Record {record.id} already exists in {record.__table__}")
             session.flush()
 
     @classmethod

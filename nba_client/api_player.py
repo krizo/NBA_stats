@@ -4,6 +4,7 @@ from nba_api.stats.endpoints import commonplayerinfo
 from nba_api.stats.static import players
 
 from helpers.helpers import lists_to_dict, convert_to_metric
+from helpers.logger import Log
 from nba_client.models.player_model import PlayerModel
 
 
@@ -102,18 +103,28 @@ class ApiPlayer:
         player_data = players_found[0]
         common_data = commonplayerinfo.CommonPlayerInfo(player_id=player_data['id']).common_player_info.get_dict()
         additional_data = lists_to_dict(common_data.get('headers'), common_data.get('data')[0])
+        draft_year = additional_data['DRAFT_YEAR']
+        draft_number = additional_data['DRAFT_NUMBER']
+        height = additional_data['HEIGHT']
+        weight = additional_data['WEIGHT']
         player_data['school'] = additional_data['SCHOOL']
         player_data['birth_date'] = datetime.datetime.strptime(additional_data['BIRTHDATE'].split('T')[0], "%Y-%m-%d")
         player_data['country'] = additional_data['COUNTRY']
         player_data['position'] = additional_data['POSITION']
         player_data['current_team_abbreviation'] = additional_data['TEAM_ABBREVIATION']
         player_data['current_team_id'] = int(additional_data['TEAM_ID'])
-        player_data['current_number'] = int(additional_data['JERSEY'])
+        player_data['current_number'] = additional_data['JERSEY']
         player_data['position'] = additional_data['POSITION']
-        player_data['draft_year'] = int(additional_data['DRAFT_YEAR'])
-        player_data['draft_number'] = int(additional_data['DRAFT_NUMBER'])
-        height_feet, height_inches = additional_data['HEIGHT'].split('-')
-        player_data['height'] = convert_to_metric(feet=int(height_feet), inches=int(height_inches))
-        player_data['weight'] = int(int(additional_data['WEIGHT']) // 2.205)
+        player_data['draft_year'] = int(draft_year) if isinstance(draft_year, int) else None
+        player_data['draft_number'] = int(draft_number) if isinstance(draft_number, int) else None
+        if height:
+            height_feet, height_inches = additional_data['HEIGHT'].split('-')
+            player_data['height'] = convert_to_metric(feet=int(height_feet), inches=int(height_inches))
+        else:
+            player_data['height'] = None
+        if weight:
+            player_data['weight'] = int(int(additional_data['WEIGHT']) // 2.205)
+        else:
+            player_data['weight'] = None
         player_data['first_season_played'] = int(additional_data['FROM_YEAR'])
         return PlayerModel(**player_data)

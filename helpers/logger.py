@@ -13,3 +13,7 @@ class Log:
     @classmethod
     def info(cls, message):
         cls.get_logger().info(message)
+
+    @classmethod
+    def warning(cls, message):
+        cls.get_logger().warning(message)

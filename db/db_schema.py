@@ -40,7 +40,6 @@ class Team(Base, Model):
     @staticmethod
     def fetch_by_id(team_id: int) -> "Team":
         from db.database import Database
-        Log.info(f"Fetching team by id: {team_id}")
         return Database.fetch_one(Team, Team.id == team_id)
 
     @staticmethod
@@ -65,12 +64,12 @@ class Player(Base, Model):
     birth_date: datetime = Column(DateTime())
     age: int = Column(Integer())
     country: str = Column(String(16))
-    number: int = Column(Integer())
+    number: str = Column(String(16))
     weight: int = Column(Integer())
     height: int = Column(Integer())
     first_season: int = Column(Integer())
-    draft_year: int = Column(Integer())
-    draft_number: int = Column(Integer())
+    draft_year: str = Column(String(16))
+    draft_number: str = Column(String(16))
 
     @staticmethod
     def create_from_api_model(api_model: ApiPlayer):

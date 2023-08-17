@@ -15,7 +15,7 @@ class PlayerModel:
     height: int
     weight: int
     position: str
-    current_number: int
+    current_number: str
     current_team_abbreviation: str
     current_team_id: int
     first_season_played: int

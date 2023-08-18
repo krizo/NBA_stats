@@ -10,7 +10,7 @@ from nba_client.api_team_game_stats import ApiTeamGameStats
 
 @dataclass
 class TeamGameStats(Base, Model):
-    __tablename__ = 'team_stats'
+    __tablename__ = 'team_game_stats'
 
     id: int = Column(Integer(), primary_key=True, autoincrement=True)
     created_at: datetime = Column(DateTime(), default=datetime.now)

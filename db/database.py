@@ -1,6 +1,6 @@
 from typing import Any
 
-from psycopg2 import IntegrityError
+from psycopg2 import IntegrityError, ProgrammingError
 from sqlalchemy import BinaryExpression
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.base import instance_dict
@@ -32,6 +32,20 @@ class Database:
     def create_tables(cls):
         from db.db_schema import Base
         Base.metadata.create_all(cls.get_engine())
+
+    @classmethod
+    def drop_table(cls, klass: "Base"):
+        try:
+            klass.__table__.drop(cls.get_engine())
+        except Exception:
+            Log.warning(f"Table {klass.__table__} doesn't exist")
+
+    @classmethod
+    def create_table(cls, klass: "Base"):
+        try:
+            klass.__table__.create(cls.get_engine())
+        except Exception:
+            Log.warning(f"Table {klass.__table__} already exists")
 
     @classmethod
     def insert(cls, record: Any):

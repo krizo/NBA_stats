@@ -1,11 +1,10 @@
 from datetime import datetime
 
-from nba_api.stats.endpoints import commonteamyears, leaguegamefinder
+from nba_api.stats.endpoints import leaguegamefinder
 from nba_api.stats.static import teams, players
 
-from db.database import Database
-from db.db_team import Team
-from db.db_player import Player
+from db.schema.db_team import Team
+from db.schema.db_player import Player
 from helpers.logger import Log
 from nba_client.api_player import ApiPlayer
 from nba_client.api_team import ApiTeam

@@ -1,9 +1,8 @@
 import pytest
 
-from data.crawler import Crawler
 from db.database import Database
-from db.db_team import Team
-from db.db_player import Player
+from db.schema.db_team import Team
+from db.schema.db_player import Player
 from helpers.helpers import assert_equals
 from nba_client.api_player import ApiPlayer
 from nba_client.api_team import ApiTeam

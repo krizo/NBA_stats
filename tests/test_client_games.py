@@ -1,7 +1,7 @@
 import pytest
 
 from db.database import Database
-from db.db_team import Team
+from db.schema.db_team import Team
 from helpers.helpers import assert_equals
 from nba_client.api_game import ApiGame
 from nba_client.api_team import ApiTeam

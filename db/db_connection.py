@@ -1,11 +1,7 @@
-from typing import Any
-
 from sqlalchemy import create_engine, Engine, Connection
 from sqlalchemy.engine import URL
-from sqlalchemy.orm import sessionmaker, Session
 
 from db.db_credentials import DbCredentials
-from db.db_team import Base
 
 
 class DatabaseConnection:

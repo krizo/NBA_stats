@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Float, Boolean
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, String
 
-from db.db_team import Base
-from db.db_model import Model
+from db.schema.db_team import Base
+from db.schema.db_model import Model
 from nba_client.api_game import ApiGame
 
 

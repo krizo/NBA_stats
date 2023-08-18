@@ -2,7 +2,7 @@ from datetime import datetime
 
 from nba_api.stats.endpoints import leaguegamefinder, BoxScoreSummaryV2, BoxScoreTraditionalV2
 
-from db.db_team import Team
+from db.schema.db_team import Team
 from nba_client.season import Season
 
 

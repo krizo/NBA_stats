@@ -1,8 +1,8 @@
 import pytest
 
 from db.database import Database
-from db.db_team import Team
-from db.db_game_team_stats import TeamGameStats
+from db.schema.db_team import Team
+from db.schema.db_game_team_stats import TeamGameStats
 from helpers.helpers import assert_equals
 from nba_client.api_team import ApiTeam
 from nba_client.api_team_game_stats import ApiTeamGameStats

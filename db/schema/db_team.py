@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, DateTime, String
 from sqlalchemy.orm import declarative_base
 
-from db.db_model import Model
+from db.schema.db_model import Model
 from nba_client.api_team import ApiTeam
 
 Base = declarative_base()

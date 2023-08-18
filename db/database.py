@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.base import instance_dict
 
 from db.schema.db_game import Game
-from db.schema.db_game_team_stats import TeamGameStats
+from db.schema.db_team_game_stats import TeamGameStats
 from db.schema.db_player import Player
 from helpers.logger import Log
 

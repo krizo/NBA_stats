@@ -2,7 +2,7 @@ from datetime import datetime
 
 from nba_api.stats.endpoints import BoxScoreSummaryV2
 
-from db.db_schema import Team
+from db.db_team import Team
 
 
 class ApiGame:

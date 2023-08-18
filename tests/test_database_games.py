@@ -2,7 +2,7 @@ import pytest
 
 from db.database import Database
 from db.db_game import Game
-from db.db_schema import Team
+from db.db_team import Team
 from nba_client.api_game import ApiGame
 from nba_client.api_team import ApiTeam
 

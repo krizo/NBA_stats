@@ -5,7 +5,7 @@ from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker, Session
 
 from db.db_credentials import DbCredentials
-from db.db_schema import Base
+from db.db_team import Base
 
 
 class DatabaseConnection:

@@ -34,7 +34,7 @@ class Database:
 
     @classmethod
     def create_tables(cls):
-        from db.db_schema import Base
+        from db.db_team import Base
         Base.metadata.create_all(cls.get_engine())
 
     @classmethod

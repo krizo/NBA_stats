@@ -1,11 +1,15 @@
-from nba_api.stats.endpoints import commonteamyears
+from datetime import datetime
+
+from nba_api.stats.endpoints import commonteamyears, leaguegamefinder
 from nba_api.stats.static import teams, players
 
 from db.database import Database
-from db.db_schema import Team, Player
+from db.db_team import Team
+from db.db_player import Player
 from helpers.logger import Log
 from nba_client.api_player import ApiPlayer
 from nba_client.api_team import ApiTeam
+from nba_client.season import Season
 
 
 class Crawler:
@@ -46,7 +50,19 @@ class Crawler:
         Log.info(f"Ignored players count: {len(ignored_players)}")
         Log.info(f"\t{', '.join(ignored_players)}")
 
+    @classmethod
+    def persist_games(cls):
+        team_id = 1610612738 # Boston
+        number_of_seasons = 10
+        current_year = datetime.now().year
+        for n in range(0, number_of_seasons):
+            # season_name = f"20{latest_season - (n + 1)}-{latest_season - n}"
+            season = Season(start_year=current_year - (n + 1))
+            gamefinder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name, league_id_nullable='00',
+                                                           team_id_nullable=team_id)
+            pass
+
 
 # Database.recreate_database()
 # Crawler.persist_teams()
-Crawler.persist_players()
+# Crawler.persist_players()

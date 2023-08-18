@@ -1,10 +1,12 @@
 from typing import Any
 
-from psycopg2 import IntegrityError, ProgrammingError
-from sqlalchemy import BinaryExpression, inspect, text
+from sqlalchemy import inspect, text, MetaData
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.base import instance_dict
 
+from db.db_game import Game
+from db.db_game_team_stats import TeamGameStats
+from db.db_player import Player
 from helpers.logger import Log
 
 
@@ -34,8 +36,10 @@ class Database:
 
     @classmethod
     def create_tables(cls):
-        from db.db_team import Base
-        Base.metadata.create_all(cls.get_engine())
+        from db.db_team import Team
+        for table in [Team, Player, Game, TeamGameStats]:
+            cls.create_table(table)
+
 
     @classmethod
     def drop_table(cls, klass: "Base"):

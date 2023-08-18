@@ -32,6 +32,7 @@ class Game(Base, Model):
         from db.database import Database
         return Database.fetch_one(Game, Game.id == game_id)
 
+    @staticmethod
     def create_from_api_model(api_model: ApiGame):
         return Game(id=api_model.game_id, game_date=api_model.game_date, home_team_id=api_model.home_team_id,
                     away_team_id=api_model.away_team_id, home_team=api_model.home_team, away_team=api_model.away_team,

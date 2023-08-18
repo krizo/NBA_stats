@@ -29,7 +29,7 @@ def test_database_players_fetch(api_player):
     assert actual_player
 
 
-def test_database_teams_update(api_player):
+def test_database_players_update(api_player):
     updated_name = "Name updated"
     player = Player.fetch_by_id(api_player.id)
     api_player.last_name = updated_name

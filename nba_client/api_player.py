@@ -11,8 +11,6 @@ from nba_client.models.player_model import PlayerModel
 class ApiPlayer:
     """ Class representing a player taken from NBA api client """
 
-    _data = None
-
     def __init__(self, first_name: str = None, last_name: str = None, id: int = None):
         self.first_name = first_name
         self.last_name = last_name

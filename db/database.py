@@ -1,7 +1,7 @@
 from typing import Any
 
 from psycopg2 import IntegrityError, ProgrammingError
-from sqlalchemy import BinaryExpression
+from sqlalchemy import BinaryExpression, inspect, text
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.base import instance_dict
 
@@ -25,8 +25,12 @@ class Database:
 
     @classmethod
     def drop_tables(cls):
-        from db.db_schema import Base
-        Base.metadata.drop_all(cls.get_engine())
+        insp = inspect(cls.get_engine())
+        for table_entry in reversed(insp.get_sorted_table_and_fkc_names()):
+            table_name = table_entry[0]
+            if table_name:
+                with cls.get_engine().begin() as conn:
+                    conn.execute(text(f'DROP TABLE "{table_name}"'))
 
     @classmethod
     def create_tables(cls):

@@ -3,7 +3,8 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Float, Boolean
 
-from db.db_schema import Base, Model
+from db.db_schema import Base
+from db.db_model import Model
 from nba_client.api_game import ApiGame
 
 

@@ -4,23 +4,12 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, DateTime, String, ForeignKey, Boolean
 from sqlalchemy.orm import declarative_base
 
+from db.db_model import Model
 from helpers.logger import Log
 from nba_client.api_player import ApiPlayer
 from nba_client.api_team import ApiTeam
 
 Base = declarative_base()
-
-
-class Model:
-    def persist(self):
-        from db.database import Database
-        Database.insert(self)
-
-    def update(self, updated_record: object):
-        from db.database import Database
-        Log.info(f"Updating {self.__table__} record by id: {updated_record.id}")
-        Log.info(f"\tUpdated model: {updated_record}")
-        Database.update(self, updated_record)
 
 
 @dataclass

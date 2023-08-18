@@ -2,7 +2,9 @@ import pytest
 
 from db.database import Database
 from db.db_game import Game
+from db.db_schema import Team
 from nba_client.api_game import ApiGame
+from nba_client.api_team import ApiTeam
 
 
 @pytest.fixture
@@ -13,6 +15,8 @@ def api_game() -> ApiGame:
 def setup():
     Database.drop_table(Game)
     Database.create_table(Game)
+    Team.create_from_api_model(ApiTeam.get_team('BOS')).persist()
+    Team.create_from_api_model(ApiTeam.get_team('MIA')).persist()
 
 
 def test_database_game_create(api_game):

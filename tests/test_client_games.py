@@ -1,7 +1,10 @@
 import pytest
 
+from db.database import Database
+from db.db_schema import Team
 from helpers.helpers import assert_equals
 from nba_client.api_game import ApiGame
+from nba_client.api_team import ApiTeam
 
 
 @pytest.fixture
@@ -22,6 +25,12 @@ def away_team_id() -> int:
 @pytest.fixture
 def game(game_id) -> ApiGame:
     return ApiGame(game_id=game_id)
+
+
+def setup():
+    Database.recreate_database()
+    Team.create_from_api_model(ApiTeam.get_team('MIA')).persist()
+    Team.create_from_api_model(ApiTeam.get_team('BOS')).persist()
 
 
 def test_api_client_games(game, game_id, away_team_id, home_team_id):

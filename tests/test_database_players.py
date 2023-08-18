@@ -2,9 +2,10 @@ import pytest
 
 from data.crawler import Crawler
 from db.database import Database
-from db.db_schema import Player
+from db.db_schema import Player, Team
 from helpers.helpers import assert_equals
 from nba_client.api_player import ApiPlayer
+from nba_client.api_team import ApiTeam
 from nba_client.models.player_model import PlayerModel
 
 
@@ -16,7 +17,7 @@ def api_player() -> PlayerModel:
 
 def setup():
     Database.recreate_database()
-    Crawler.persist_teams()
+    Team.create_from_api_model(ApiTeam.get_team('LAL')).persist()
 
 
 def test_database_player_create(api_player):

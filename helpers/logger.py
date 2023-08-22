@@ -7,9 +7,9 @@ class Log:
     @classmethod
     def get_logger(cls) -> logging.Logger:
         if cls._logger is None:
-            cls._logger = logging.getLogger(__name__)
-            logging.basicConfig(level=logging.INFO)
             logger = logging.getLogger(__name__)
+            format = '%(asctime)s:%(levelname)s: %(message)s'
+            logging.basicConfig(level=logging.INFO, format=format)
             cls._logger = logger
         return cls._logger
 

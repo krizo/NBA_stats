@@ -57,7 +57,7 @@ class ApiPlayer:
         return self._info.current_team_abbreviation
 
     @property
-    def current_number(self) -> int:
+    def current_number(self) -> str:
         return self._info.current_number
 
     @property
@@ -77,12 +77,12 @@ class ApiPlayer:
         return self._info.age
 
     @property
-    def draft_year(self) -> int:
-        return self._info.draft_year
+    def draft_year(self) -> str:
+        return str(self._info.draft_year)
 
     @property
-    def draft_number(self) -> int:
-        return self._info.draft_number
+    def draft_number(self) -> str:
+        return str(self._info.draft_number)
 
     @property
     def id(self) -> int:

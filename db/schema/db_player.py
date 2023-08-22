@@ -13,8 +13,8 @@ from nba_client.api_player import ApiPlayer
 class Player(Base, Model):
     __tablename__ = 'players'
 
-    id: int = Column(Integer(), primary_key=True)
-    team_id: int = Column(Integer(), ForeignKey('teams.id'))
+    id: int = Column(Integer(), primary_key=True, index=True)
+    team_id: int = Column(Integer(), ForeignKey('teams.id'), index=True)
     created_at: datetime = Column(DateTime(), default=datetime.now)
     updated_at: datetime = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
     first_name: str = Column(String(128))

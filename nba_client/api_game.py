@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from nba_api.stats.endpoints import BoxScoreSummaryV2
+from retry import retry
 
 from db.schema.db_team import Team
 from nba_client.season import Season
@@ -16,7 +17,7 @@ class ApiGame:
     @property
     def _box_score_summary(self) -> dict:
         if self._inf is None:
-            self._inf = BoxScoreSummaryV2(game_id=self.game_id).get_normalized_dict()
+            self._inf = self.get_box_score_summary_v2(game_id=self.game_id)
         return self._inf
 
     @property
@@ -101,3 +102,8 @@ class ApiGame:
             return next(s for s in stats if s['TEAM_ID'] == team_id)
         except StopIteration:
             return None
+
+    @staticmethod
+    @retry(tries=10, delay=30)
+    def get_box_score_summary_v2(game_id: str):
+        return BoxScoreSummaryV2(game_id=game_id).get_normalized_dict()

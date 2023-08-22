@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
 from nba_api.stats.endpoints import BoxScoreTraditionalV2
+from retry import retry
 
 from db.schema.db_team import Team
 from nba_client.api_game import ApiGame
@@ -26,8 +27,8 @@ class ApiGameStatsBase(ApiGame):
     @property
     def _traditional_stats(self) -> dict:
         if self._stats is None:
-            stats = BoxScoreTraditionalV2(self.game_id)
-            self._stats = stats.get_normalized_dict() if stats else None
+            stats = self.get_box_score_tradition(self.game_id)
+            self._stats = stats if stats else None
         return self._stats
 
     @property
@@ -89,3 +90,8 @@ class ApiGameStatsBase(ApiGame):
             return next(s for s in stats if s['TEAM_ID'] == team_id)
         except StopIteration:
             return None
+
+    @staticmethod
+    @retry(tries=10, delay=30)
+    def get_box_score_tradition(game_id: str):
+        return BoxScoreTraditionalV2(game_id).get_normalized_dict()

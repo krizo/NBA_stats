@@ -1,9 +1,4 @@
-from datetime import datetime
-
-from nba_api.stats.endpoints import leaguegamefinder, BoxScoreSummaryV2, BoxScoreTraditionalV2, boxscoreplayertrackv2
-
 from nba_client.api_game_stats_base_py import ApiGameStatsBase
-from nba_client.season import Season
 
 
 class ApiPlayerGameStats(ApiGameStatsBase):
@@ -45,7 +40,9 @@ class ApiPlayerGameStats(ApiGameStatsBase):
     @property
     def minutes(self) -> int:
         minutes = self._player_stats.get('MIN') if self._player_stats else None
-        return int(float(minutes.split(':')[0]))
+        if minutes:
+            return int(float(minutes.split(':')[0]))
+        return 0
 
     @property
     def fgm(self) -> int:
@@ -129,7 +126,7 @@ class ApiPlayerGameStats(ApiGameStatsBase):
 
     @property
     def result(self):
-        return 'W' if self.points > self.opponent_points else 'L'
+        return 'W' if self.team_points > self.opponent_points else 'L'
 
     @property
     def score(self) -> str:
@@ -140,4 +137,3 @@ class ApiPlayerGameStats(ApiGameStatsBase):
             return next(s for s in stats if s['PLAYER_ID'] == self.player_id)
         except StopIteration:
             return None
-

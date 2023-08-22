@@ -1,8 +1,5 @@
-from datetime import datetime
+from nba_api.stats.endpoints import leaguegamefinder
 
-from nba_api.stats.endpoints import leaguegamefinder, BoxScoreSummaryV2, BoxScoreTraditionalV2
-
-from db.schema.db_team import Team
 from nba_client.api_game_stats_base_py import ApiGameStatsBase
 from nba_client.season import Season
 
@@ -129,3 +126,8 @@ class ApiTeamGameStats(ApiGameStatsBase):
         game_finder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name, league_id_nullable='00',
                                                         team_id_nullable=team_id)
         return game_finder.get_normalized_dict().get('LeagueGameFinderResults')
+
+    @property
+    def team_player_ids(self) -> [int]:
+        player_stats = self._traditional_stats.get('PlayerStats') if self._traditional_stats else None
+        return [player.get('PLAYER_ID') for player in player_stats if player.get('TEAM_ID') == self.team_id]

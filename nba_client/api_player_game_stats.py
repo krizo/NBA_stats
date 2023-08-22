@@ -141,15 +141,3 @@ class ApiPlayerGameStats(ApiGameStatsBase):
         except StopIteration:
             return None
 
-    @staticmethod
-    def _get_team_stats(stats: list[dict], team_id) -> dict or None:
-        try:
-            return next(s for s in stats if s['TEAM_ID'] == team_id)
-        except StopIteration:
-            return None
-
-    @staticmethod
-    def get_team_games(team_id: int, season: Season):
-        gamefinder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name, league_id_nullable='00',
-                                                       team_id_nullable=team_id)
-        return gamefinder.get_normalized_dict().get('LeagueGameFinderResults')

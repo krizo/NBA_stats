@@ -25,8 +25,8 @@ def game_id() -> str:
 
 def setup():
     Database.recreate_database()
-    Team.create_from_api_model(ApiTeam.get_team('MIA')).persist()
-    Team.create_from_api_model(ApiTeam.get_team('BOS')).persist()
+    Team.create_from_api_model(ApiTeam('MIA')).persist()
+    Team.create_from_api_model(ApiTeam('BOS')).persist()
     api_game = ApiGame(game_id='0042200307')
     game = Game.create_from_api_model(api_model=api_game)
     game.persist()
@@ -101,5 +101,5 @@ def test_database_team_game_stats_fetch(api_tgs, expected_stats, team_id, game_i
     TeamGameStats.create_from_api_model(api_tgs).persist()
     actual_record = TeamGameStats.fetch(team_id=team_id, game_id=game_id)
     for attr, expected_value in expected_stats.items():
-        Log.info(f"Checking {attr}")
+        Log.info(f"Checking {attr} is {expected_value}")
         assert_equals(actual_record.__getattribute__(attr), expected_value, attr)

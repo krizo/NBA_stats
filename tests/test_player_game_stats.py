@@ -38,8 +38,8 @@ def api_pst(game_id, player_id):
 
 def setup():
     Database.recreate_database()
-    Team.create_from_api_model(ApiTeam.get_team('MIA')).persist()
-    Team.create_from_api_model(ApiTeam.get_team('BOS')).persist()
+    Team.create_from_api_model(ApiTeam('MIA')).persist()
+    Team.create_from_api_model(ApiTeam('BOS')).persist()
     api_game = ApiGame(game_id='0042200307')
     game = Game.create_from_api_model(api_model=api_game)
     game.persist()
@@ -89,14 +89,14 @@ def expected_stats(game_id, player_id):
 
 def test_client_player_game_stats(api_pst, expected_stats, player_id, game_id):
     for attr, expected_value in expected_stats.items():
-        Log.info(f"Checking {attr}")
+        Log.info(f"Checking {attr} is {expected_value}")
         assert_equals(api_pst.__getattribute__(attr), expected_value, attr)
 
 
 def test_database_player_game_stats_create(api_pst, expected_stats, player_id, game_id):
     db_pst = PlayerGameStats.create_from_api_model(api_pst)
     for attr, expected_value in expected_stats.items():
-        Log.info(f"Checking {attr}")
+        Log.info(f"Checking {attr} is {expected_value}")
         assert_equals(db_pst.__getattribute__(attr), expected_value, attr)
 
 
@@ -104,5 +104,5 @@ def test_database_player_game_stats_fetch(api_pst, expected_stats, player_id, ga
     PlayerGameStats.create_from_api_model(api_pst).persist()
     actual_record = PlayerGameStats.fetch(player_id=player_id, game_id=game_id)
     for attr, expected_value in expected_stats.items():
-        Log.info(f"Checking {attr}")
+        Log.info(f"Checking {attr} is {expected_value}")
         assert_equals(actual_record.__getattribute__(attr), expected_value, attr)

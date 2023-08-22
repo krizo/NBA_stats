@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from db.database import Database
@@ -54,6 +56,8 @@ def expected_stats(game_id, player_id):
         "opponent_team_id": 1610612748,
         "team": "BOS",
         "opponent_team": "MIA",
+        "game_date": datetime.datetime(2023, 5, 29, 0, 0),
+        "season": "2022-23",
         "team_points": 84,
         "opponent_points": 103,
         "player_name": "Jayson Tatum",

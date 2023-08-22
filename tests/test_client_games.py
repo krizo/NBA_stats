@@ -48,3 +48,4 @@ def test_api_client_games(game, game_id, away_team_id, home_team_id):
     assert game.status
     assert game.winner
     assert game.game_date
+    assert game.season == "2022-23"

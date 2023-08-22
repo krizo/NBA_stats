@@ -28,6 +28,7 @@ class PlayerGameStats(Base, Model):
     home_team: str = Column(String(3))
     away_team: str = Column(String(3))
     game_date: datetime = Column(DateTime())
+    season: str = Column(String(8))
     team_points: int = Column(Integer())
     player_name: str = Column(String(128))
     score: str = Column(String(8))
@@ -61,7 +62,7 @@ class PlayerGameStats(Base, Model):
                                team=api_model.team, game_date=api_model.game_date, home_team_id=api_model.home_team_id,
                                home_team=api_model.home_team, away_team_id=api_model.away_team_id,
                                away_team=api_model.away_team, opponent_team_id=api_model.opponent_team_id,
-                               result=api_model.result, team_points=api_model.team_points,
+                               season=api_model.season, result=api_model.result, team_points=api_model.team_points,
                                player_name=api_model.player_name, points=api_model.points,
                                opponent_team=api_model.opponent_team, opponent_points=api_model.opponent_points,
                                score=api_model.score, played_at_home=api_model.played_at_home,

@@ -3,6 +3,7 @@ from datetime import datetime
 from nba_api.stats.endpoints import BoxScoreSummaryV2
 
 from db.schema.db_team import Team
+from nba_client.season import Season
 
 
 class ApiGame:
@@ -55,6 +56,12 @@ class ApiGame:
         if date_str:
             return datetime.strptime(date_str.rpartition('T')[0], "%Y-%m-%d")
         return None
+
+    @property
+    def season(self) -> str:
+        if self.game_date.month < 10:
+            return Season(self.game_date.year - 1).name
+        return Season(self.game_date.year).name
 
     @property
     def matchup(self) -> str:

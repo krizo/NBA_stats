@@ -1,8 +1,10 @@
+from abc import abstractmethod
 from datetime import datetime
 
 from nba_api.stats.endpoints import BoxScoreTraditionalV2, BoxScoreSummaryV2
 
 from db.schema.db_team import Team
+from nba_client.season import Season
 
 
 class ApiGameStatsBase:
@@ -103,8 +105,19 @@ class ApiGameStatsBase:
         return None
 
     @property
+    def season(self) -> str:
+        if self.game_date.month < 10:
+            return Season(self.game_date.year - 1).name
+        return Season(self.game_date.year).name
+
+    @property
     def opponent_points(self) -> int:
         return self._opponent_team_stats.get('PTS') if self._opponent_team_stats else None
+
+    @property
+    @abstractmethod
+    def points(self):
+        return
 
     @property
     def result(self):

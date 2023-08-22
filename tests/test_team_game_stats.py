@@ -45,6 +45,7 @@ def expected_stats(game_id, team_id):
         "team": "BOS",
         "opponent_team": "MIA",
         "game_date": datetime.datetime(2023, 5, 29, 0, 0),
+        "season": "2022-23",
         "home_team": "BOS",
         "home_team_id": team_id,
         "away_team_id": 1610612748,

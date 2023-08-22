@@ -20,6 +20,7 @@ class TeamGameStats(Base, Model):
     team: str = Column(String(3))
     opponent_team: str = Column(String(3))
     game_date: datetime = Column(DateTime())
+    season: str = Column(String(8))
     home_team: str = Column(String(3))
     home_team_id: int = Column(Integer(), ForeignKey('teams.id'))
     away_team_id: int = Column(Integer(), ForeignKey('teams.id'))
@@ -77,4 +78,4 @@ class TeamGameStats(Base, Model):
                              defensive_rebounds=api_model.defensive_rebounds, rebounds=api_model.rebounds,
                              assists=api_model.assists, steals=api_model.steals, blocks=api_model.blocks,
                              turnovers=api_model.turnovers, personal_fouls=api_model.personal_fouls,
-                             plus_minus=api_model.plus_minus)
+                             plus_minus=api_model.plus_minus, season=api_model.season)

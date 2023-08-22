@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.base import instance_dict
 
 from db.schema.db_game import Game
+from db.schema.db_player_game_stats import PlayerGameStats
 from db.schema.db_team_game_stats import TeamGameStats
 from db.schema.db_player import Player
 from helpers.logger import Log
@@ -37,7 +38,7 @@ class Database:
     @classmethod
     def create_tables(cls):
         from db.schema.db_team import Team
-        for table in [Team, Player, Game, TeamGameStats]:
+        for table in [Team, Player, Game, TeamGameStats, PlayerGameStats]:
             cls.create_table(table)
 
 
@@ -52,7 +53,7 @@ class Database:
     def create_table(cls, klass: "Base"):
         try:
             klass.__table__.create(cls.get_engine())
-        except Exception:
+        except Exception as ex:
             Log.warning(f"Table {klass.__table__} already exists")
 
     @classmethod
@@ -62,8 +63,13 @@ class Database:
             try:
                 session.commit()
             except Exception as ex:
-                if ex.orig.pgcode == 23505:
+                if ex.orig.pgcode == '23505':
                     Log.warning(f"Record {record.id} already exists in {record.__table__}")
+                else:
+                    Log.error(f"Can't insert record {record}.")
+                    Log.error(f"Exception: {ex.orig.diag.message_primary}.")
+                    Log.error(f"Exception: {ex.orig.diag.message_detail}.")
+                    raise Exception(ex)
             session.flush()
 
     @classmethod

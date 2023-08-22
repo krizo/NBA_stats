@@ -35,7 +35,7 @@ class Crawler:
         for count, raw_player in enumerate(all_players):
             api_player = ApiPlayer(id=raw_player.get('id'))
             player = Player.create_from_api_model(api_player)
-            team = Team.fetch_by_id(player.team_id)
+            team = Team.fetch_by_id(player.player_id)
             if team:
                 Log.info(f"\tPlayer #{count + 1}: {api_player.first_name} {api_player.last_name} ({team.name})")
                 player.persist()

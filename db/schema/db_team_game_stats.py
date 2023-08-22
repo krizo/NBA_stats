@@ -34,7 +34,7 @@ class TeamGameStats(Base, Model):
     largest_lead: int = Column(Integer())
     lead_changes: int = Column(Integer())
     times_tied: int = Column(Integer())
-    minutes: str = Column(String(16))
+    minutes: int = Column(Integer())
     fgm: int = Column(Integer())
     fga: int = Column(Integer())
     fg_pct: float = Column(Float())
@@ -56,6 +56,11 @@ class TeamGameStats(Base, Model):
     points_off_to: int = Column(Integer())
 
     @staticmethod
+    def fetch(team_id: int, game_id: str) -> "TeamGameStats":
+        from db.database import Database
+        return Database.fetch_one(TeamGameStats, TeamGameStats.team_id == team_id and TeamGameStats.game_id == game_id)
+
+    @staticmethod
     def create_from_api_model(api_model: ApiTeamGameStats):
         return TeamGameStats(team_id=api_model.team_id, game_id=api_model.game_id, team=api_model.team,
                              game_date=api_model.game_date, home_team_id=api_model.home_team_id,
@@ -63,13 +68,13 @@ class TeamGameStats(Base, Model):
                              away_team=api_model.away_team, result=api_model.result, points=api_model.points,
                              opponent_team=api_model.opponent_team, opponent_points=api_model.opponent_points,
                              score=api_model.score, played_at_home=api_model.played_at_home,
-                             points_paint=api_model.points_paint, points_2nd_chance=api_model.points_2nd_chance,
-                             largest_lead=api_model.largest_lead, lead_changes=api_model.lead_changes,
-                             times_tied=api_model.times_tied, minutes=api_model.minutes, fgm=api_model.fgm,
-                             fga=api_model.fga, fg_pct=api_model.fg_pct, fg3m=api_model.fg3m, fg3a=api_model.fg3a,
-                             fg3_pct=api_model.fg3_pct, ftm=api_model.ftm, ft_pct=api_model.ft_pct, fta=api_model.fta,
-                             offensive_rebounds=api_model.offensive_rebounds,
+                             minutes=api_model.minutes, fgm=api_model.fgm, largest_lead=api_model.largest_lead,
+                             lead_changes=api_model.lead_changes, fga=api_model.fga, fg_pct=api_model.fg_pct,
+                             fg3m=api_model.fg3m, fg3a=api_model.fg3a, fg3_pct=api_model.fg3_pct, ftm=api_model.ftm,
+                             ft_pct=api_model.ft_pct, fta=api_model.fta, times_tied=api_model.times_tied,
+                             offensive_rebounds=api_model.offensive_rebounds, points_paint=api_model.points_paint,
+                             points_2nd_chance=api_model.points_2nd_chance, points_off_to=api_model.points_off_to,
                              defensive_rebounds=api_model.defensive_rebounds, rebounds=api_model.rebounds,
                              assists=api_model.assists, steals=api_model.steals, blocks=api_model.blocks,
                              turnovers=api_model.turnovers, personal_fouls=api_model.personal_fouls,
-                             plus_minus=api_model.plus_minus, points_off_to=api_model.points_off_to)
+                             plus_minus=api_model.plus_minus)

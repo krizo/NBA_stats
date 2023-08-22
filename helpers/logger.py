@@ -20,3 +20,7 @@ class Log:
     @classmethod
     def warning(cls, message):
         cls.get_logger().warning(message)
+
+    @classmethod
+    def error(cls, message):
+        cls.get_logger().error(message)

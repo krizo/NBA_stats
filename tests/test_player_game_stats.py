@@ -18,7 +18,7 @@ from nba_client.api_team import ApiTeam
 @pytest.fixture
 def player_id() -> id:
     player_id = 1628369
-    api_player = ApiPlayer(id=player_id)
+    api_player = ApiPlayer(player_id=player_id)
     Player.create_from_api_model(api_player).persist()
     return player_id
 

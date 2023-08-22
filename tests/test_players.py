@@ -60,7 +60,7 @@ def test_api_players_by_name(first_name, last_name, expected_player):
 
 
 def test_api_players_by_id(player_id, expected_player):
-    assert_model(model=ApiPlayer(id=player_id), expected_values=expected_player)
+    assert_model(model=ApiPlayer(player_id=player_id), expected_values=expected_player)
 
 
 def test_database_player_create(api_player, expected_player):

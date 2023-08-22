@@ -14,7 +14,7 @@ from nba_client.api_team_game_stats import ApiTeamGameStats
 class PlayerGameStats(Base, Model):
     __tablename__ = 'player_game_stats'
 
-    id: int = Column(Integer(), primary_key=True, autoincrement=True)
+    id: str = Column(String(64), primary_key=True, index=True)
     created_at: datetime = Column(DateTime(), default=datetime.now)
     updated_at: datetime = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
     game_id: str = Column(String(16), ForeignKey('games.id'), index=True)
@@ -58,7 +58,8 @@ class PlayerGameStats(Base, Model):
 
     @staticmethod
     def create_from_api_model(api_model: ApiPlayerGameStats):
-        return PlayerGameStats(player_id=api_model.player_id, team_id=api_model.team_id, game_id=api_model.game_id,
+        id = f"{api_model.player_id}_{api_model.game_id}"
+        return PlayerGameStats(id=id, player_id=api_model.player_id, team_id=api_model.team_id, game_id=api_model.game_id,
                                team=api_model.team, game_date=api_model.game_date, home_team_id=api_model.home_team_id,
                                home_team=api_model.home_team, away_team_id=api_model.away_team_id,
                                away_team=api_model.away_team, opponent_team_id=api_model.opponent_team_id,
@@ -78,6 +79,5 @@ class PlayerGameStats(Base, Model):
     @staticmethod
     def fetch(player_id: int, game_id) -> "PlayerGameStats":
         from db.database import Database
-        Log.info(f"Fetching {game_id} game performed by player id: {player_id}")
         return Database.fetch_one(PlayerGameStats, PlayerGameStats.player_id == player_id and
                                   PlayerGameStats.game_id == game_id)

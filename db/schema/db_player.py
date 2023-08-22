@@ -1,11 +1,12 @@
+import datetime
 from dataclasses import dataclass
 from datetime import datetime
+from sqlite3 import Date
 
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Boolean
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Boolean, Date
 
 from db.schema.db_model import Model
 from db.schema.db_team import Base
-from helpers.logger import Log
 from nba_client.api_player import ApiPlayer
 
 
@@ -21,7 +22,7 @@ class Player(Base, Model):
     last_name: str = Column(String(128))
     is_active: bool = Column(Boolean())
     school: str = Column(String(256))
-    birth_date: datetime = Column(DateTime())
+    birth_date: datetime.date = Column(Date())
     age: int = Column(Integer())
     country: str = Column(String(16))
     current_number: int = Column(Integer())
@@ -45,5 +46,4 @@ class Player(Base, Model):
     @staticmethod
     def fetch_by_id(player_id: int) -> "Player":
         from db.database import Database
-        Log.info(f"Fetching player by id: {player_id}")
         return Database.fetch_one(Player, Player.player_id == player_id)

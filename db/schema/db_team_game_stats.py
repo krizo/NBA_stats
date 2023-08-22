@@ -12,10 +12,10 @@ from nba_client.api_team_game_stats import ApiTeamGameStats
 class TeamGameStats(Base, Model):
     __tablename__ = 'team_game_stats'
 
-    id: int = Column(Integer(), primary_key=True, autoincrement=True)
+    id: str = Column(String(64), primary_key=True, index=True)
     created_at: datetime = Column(DateTime(), default=datetime.now)
     updated_at: datetime = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
-    game_id: str = Column(String(16), ForeignKey('games.id'), index=True)
+    game_id: str = Column(String(16), ForeignKey('games.id'), index=True, unique=True)
     team_id: int = Column(Integer(), ForeignKey('teams.team_id'), index=True)
     opponent_team_id: int = Column(Integer(), ForeignKey('teams.team_id'), index=True)
     team: str = Column(String(3))
@@ -64,7 +64,8 @@ class TeamGameStats(Base, Model):
 
     @staticmethod
     def create_from_api_model(api_model: ApiTeamGameStats):
-        return TeamGameStats(team_id=api_model.team_id, game_id=api_model.game_id, team=api_model.team,
+        id = f"{api_model.team_id}_{api_model.game_id}"
+        return TeamGameStats(id=id, team_id=api_model.team_id, game_id=api_model.game_id, team=api_model.team,
                              game_date=api_model.game_date, home_team_id=api_model.home_team_id,
                              home_team=api_model.home_team, away_team_id=api_model.away_team_id,
                              away_team=api_model.away_team, result=api_model.result, points=api_model.points,

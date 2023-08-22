@@ -30,6 +30,11 @@ class Team(Base, Model):
         return Database.fetch_one(Team, Team.team_id == team_id)
 
     @staticmethod
+    def fetch_all() -> ["Team"]:
+        from db.database import Database
+        return Database.fetch_all(Team)
+
+    @staticmethod
     def create_from_api_model(api_model: ApiTeam):
         return Team(team_id=api_model.team_id, name=api_model.name, abbreviation=api_model.abbreviation,
                     nickname=api_model.nickname, state=api_model.state, city=api_model.city,

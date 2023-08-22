@@ -89,7 +89,6 @@ class Database:
             return query.filter(kwargs).first()
 
     @classmethod
-    def fetch_all(cls, klass: object, kwargs):
+    def fetch_all(cls, klass: object):
         with Session(cls.get_engine()) as session:
-            query = session.query(klass)
-            return query.filter(kwargs).all()
+            return session.query(klass).all()

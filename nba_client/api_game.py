@@ -34,7 +34,7 @@ class ApiGame:
 
     @property
     def home_team(self) -> str:
-        return Team.fetch_by_id(self.home_team_id).short_name if self.home_team_id else None
+        return Team.fetch_by_id(self.home_team_id).abbreviation if self.home_team_id else None
 
     @property
     def away_team_id(self) -> int:
@@ -42,7 +42,7 @@ class ApiGame:
 
     @property
     def away_team(self) -> str:
-        return Team.fetch_by_id(self.away_team_id).short_name if self.away_team_id else None
+        return Team.fetch_by_id(self.away_team_id).abbreviation if self.away_team_id else None
 
     @property
     def _scores(self) -> dict or None:

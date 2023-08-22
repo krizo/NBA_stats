@@ -20,7 +20,7 @@ class Crawler:
         Log.info(f"Persisting {len(all_teams)} teams.")
         for raw_team in teams.get_teams():
             api_team = ApiTeam(abbreviation=raw_team.get('abbreviation'))
-            team = Team(id=api_team.id, name=api_team.name, short_name=api_team.abbreviation,
+            team = Team(team_id=api_team.team_id, name=api_team.name, abbreviation=api_team.abbreviation,
                         nickname=api_team.nickname,
                         state=api_team.state, city=api_team.city, year_founded=api_team.year_founded)
             Log.info(f"\tTeam: {team.name}")
@@ -51,7 +51,7 @@ class Crawler:
 
     @classmethod
     def persist_games(cls):
-        team_id = 1610612738 # Boston
+        team_id = 1610612738  # Boston
         number_of_seasons = 10
         current_year = datetime.now().year
         for n in range(0, number_of_seasons):
@@ -60,7 +60,6 @@ class Crawler:
             gamefinder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name, league_id_nullable='00',
                                                            team_id_nullable=team_id)
             pass
-
 
 # Database.recreate_database()
 # Crawler.persist_teams()

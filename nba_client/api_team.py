@@ -10,52 +10,33 @@ class ApiTeam:
     _teams_cached = None
 
     def __init__(self, abbreviation: str):
-        self._abbreviation = abbreviation
+        self.abbreviation = abbreviation
+        self._team_props = None
+        self.team_id: int = self._team_properties.get('id')
+        self.name: str = self._team_properties.get('full_name')
+        self.nickname: str = self._team_properties.get('nickname')
+        self.city: str = self._team_properties.get('city')
+        self.state: str = self._team_properties.get('state')
+        year_founded = self._team_properties.get('year_founded')
+        self.year_founded: int = int(year_founded) if year_founded else None
 
     @property
-    def _team(self) -> TeamModel:
-        team = self.get_team(self._abbreviation)
+    def _team_properties(self) -> dict:
+        if self._team_props is None:
+            self._team_props = self._team.items()
+        return dict(self._team_props)
+
+    @property
+    def _team(self) -> dict:
+        team = self._get_team(self.abbreviation)
         if team is None:
             raise ValueError(
-                f"Team can't be found by {self._abbreviation}. Call Teams.get_abbreviations() to get all valid values")
+                f"Team can't be found by {self.abbreviation}. Call Teams.get_abbreviations() to get all valid values")
         return team
 
-    @property
-    def abbreviation(self) -> str:
-        return self._team.abbreviation
-
-    @property
-    def id(self) -> int:
-        return self._team.id
-
-    @property
-    def name(self) -> str:
-        return self._team.name
-
-    @property
-    def nickname(self) -> str:
-        return self._team.nickname
-
-    @property
-    def city(self) -> str:
-        return self._team.city
-
-    @property
-    def state(self) -> str:
-        return self._team.state
-
-    @property
-    def year_founded(self) -> int:
-        return self._team.year_founded
-
     @classmethod
-    def get_team(cls, abbreviation: str) -> TeamModel or None:
-        team = find_in_collection(collection=cls.get_teams(), attribute='abbreviation', expected_value=abbreviation)
-        if team:
-            return TeamModel(id=team.get('id'), abbreviation=team.get('abbreviation'), name=team.get('full_name'),
-                             nickname=team.get('nickname'), city=team.get('city'), state=team.get('state'),
-                             year_founded=team.get('year_founded'))
-        return None
+    def _get_team(cls, abbreviation: str) -> TeamModel or None:
+        return find_in_collection(collection=cls.get_teams(), attribute='abbreviation', expected_value=abbreviation)
 
     @classmethod
     def get_teams(cls) -> [dict]:

@@ -50,7 +50,7 @@ class ApiGameStatsBase(ApiGame):
 
     @property
     def team(self) -> str:
-        return Team.fetch_by_id(self.team_id).short_name
+        return Team.fetch_by_id(self.team_id).abbreviation
 
     @property
     def opponent_team_id(self) -> int:
@@ -60,7 +60,7 @@ class ApiGameStatsBase(ApiGame):
 
     @property
     def opponent_team(self) -> str:
-        return Team.fetch_by_id(self.opponent_team_id).short_name
+        return Team.fetch_by_id(self.opponent_team_id).abbreviation
 
     @property
     def team_points(self) -> int:

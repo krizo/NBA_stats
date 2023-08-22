@@ -1,6 +1,7 @@
 from typing import Any
 
 from sqlalchemy import inspect, text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.base import instance_dict
 
@@ -41,7 +42,6 @@ class Database:
         for table in [Team, Player, Game, TeamGameStats, PlayerGameStats]:
             cls.create_table(table)
 
-
     @classmethod
     def drop_table(cls, klass: "Base"):
         try:
@@ -62,20 +62,21 @@ class Database:
             session.add(record)
             try:
                 session.commit()
+            except IntegrityError as ex:
+                Log.warning(f"Record already exists in {record.__table__}. {ex}")
+                session.flush()
+                return
             except Exception as ex:
-                if ex.orig.pgcode == '23505':
-                    Log.warning(f"Record {record.id} already exists in {record.__table__}")
-                else:
-                    Log.error(f"Can't insert record {record}.")
-                    Log.error(f"Exception: {ex.orig.diag.message_primary}.")
-                    Log.error(f"Exception: {ex.orig.diag.message_detail}.")
-                    raise Exception(ex)
-            session.flush()
+                Log.error(f"Can't insert record {record}.")
+                for ex_arg in ex.args:
+                    Log.error(f"\t{ex_arg}")
+            finally:
+                session.flush()
 
     @classmethod
-    def update(cls, existing_object: object, updated_object: object):
+    def update(cls, existing_object: object, updated_object: object, primary_key: str):
         with Session(cls.get_engine()) as session:
-            existing_record = session.query(type(existing_object)).get(existing_object.id)
+            existing_record = session.query(type(existing_object)).get(existing_object.__getattribute__(primary_key))
             if existing_record:
                 for key, value in instance_dict(updated_object).items():
                     setattr(existing_record, key, value)

@@ -69,7 +69,7 @@ class ApiGame:
 
     @property
     def season(self) -> str:
-        if self.game_date.month < 10:
+        if self.game_date.month < 9:
             return Season(self.game_date.year - 1).name
         return Season(self.game_date.year).name
 

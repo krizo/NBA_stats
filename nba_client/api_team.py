@@ -40,7 +40,7 @@ class ApiTeam:
         return find_in_collection(collection=cls.get_teams(), attribute='abbreviation', expected_value=abbreviation)
 
     @classmethod
-    @retry(tries=10, delay=30)
+    @retry(tries=10, delay=10)
     def get_teams(cls) -> [dict]:
         if cls._teams_cached is None:
             cls._teams_cached = teams.get_teams()

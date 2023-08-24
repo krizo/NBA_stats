@@ -92,6 +92,6 @@ class ApiGameStatsBase(ApiGame):
             return None
 
     @staticmethod
-    @retry(tries=10, delay=30)
+    @retry(tries=10, delay=10)
     def get_box_score_tradition(game_id: str):
         return BoxScoreTraditionalV2(game_id).get_normalized_dict()

@@ -24,7 +24,7 @@ class DatabaseConnection:
         return create_engine(self.url)
 
     @property
-    def _connection(self) -> Connection:
+    def connection(self) -> Connection:
         if self._conn is None:
             self._conn = self.engine.connect()
         return self._conn

@@ -63,15 +63,13 @@ class Database:
             try:
                 session.commit()
             except IntegrityError as ex:
-                Log.warning(f"Record already exists in {record.__table__}. {ex}")
+                Log.warning(f"Can't insert record into {record.__table__}. {ex}")
                 session.flush()
                 return
             except Exception as ex:
                 Log.error(f"Can't insert record {record}.")
                 for ex_arg in ex.args:
                     Log.error(f"\t{ex_arg}")
-            finally:
-                session.flush()
 
     @classmethod
     def update(cls, existing_object: object, updated_object: object, primary_key: str):
@@ -83,10 +81,10 @@ class Database:
             session.commit()
 
     @classmethod
-    def fetch_one(cls, model: object, kwargs):
+    def fetch_one(cls, model: object, *args):
         with Session(cls.get_engine()) as session:
             query = session.query(model)
-            return query.filter(kwargs).first()
+            return query.filter(*args).first()
 
     @classmethod
     def fetch_all(cls, klass: object):

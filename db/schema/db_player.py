@@ -1,21 +1,19 @@
-import datetime
 from dataclasses import dataclass
 from datetime import datetime
-from sqlite3 import Date
 
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Boolean, Date
 
-from db.schema.db_model import Model
+from db.schema.db_model import DbModel
 from db.schema.db_team import Base
 from nba_client.api_player import ApiPlayer
 
 
 @dataclass
-class Player(Base, Model):
+class Player(Base, DbModel):
     __tablename__ = 'players'
 
     player_id: int = Column(Integer(), primary_key=True, index=True)
-    team_id: int = Column(Integer(), ForeignKey('teams.team_id'), index=True)
+    team_id: int = Column(Integer(), ForeignKey('teams.team_id'), index=True, nullable=True)
     created_at: datetime = Column(DateTime(), default=datetime.now)
     updated_at: datetime = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
     first_name: str = Column(String(128))
@@ -24,7 +22,7 @@ class Player(Base, Model):
     school: str = Column(String(256))
     birth_date: datetime.date = Column(Date())
     age: int = Column(Integer())
-    country: str = Column(String(16))
+    country: str = Column(String(128))
     current_number: int = Column(Integer())
     current_team_abbreviation: str = Column(String(3))
     weight: int = Column(Integer())

@@ -1,7 +1,7 @@
 from helpers.logger import Log
 
 
-class Model:
+class DbModel:
     def persist(self):
         from db.database import Database
         Database.insert(self)

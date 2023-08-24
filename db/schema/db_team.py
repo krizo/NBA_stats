@@ -4,14 +4,14 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, DateTime, String
 from sqlalchemy.orm import declarative_base
 
-from db.schema.db_model import Model
+from db.schema.db_model import DbModel
 from nba_client.api_team import ApiTeam
 
 Base = declarative_base()
 
 
 @dataclass
-class Team(Base, Model):
+class Team(Base, DbModel):
     __tablename__ = 'teams'
 
     team_id: int = Column(Integer(), primary_key=True, nullable=False, index=True)
@@ -35,9 +35,17 @@ class Team(Base, Model):
         return Database.fetch_all(Team)
 
     @staticmethod
+    def fetch_by_name(name: str):
+        from db.database import Database
+        return Database.fetch_one(Team, Team.name == name)
+
+    @staticmethod
+    def fetch_by_short_name(short_name: str):
+        from db.database import Database
+        return Database.fetch_one(Team, Team.abbreviation == short_name)
+
+    @staticmethod
     def create_from_api_model(api_model: ApiTeam):
         return Team(team_id=api_model.team_id, name=api_model.name, abbreviation=api_model.abbreviation,
                     nickname=api_model.nickname, state=api_model.state, city=api_model.city,
                     year_founded=api_model.year_founded)
-
-

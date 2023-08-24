@@ -4,24 +4,26 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Float, Boolean
 
 from db.schema.db_team import Base
-from db.schema.db_model import Model
+from db.schema.db_model import DbModel
 from nba_client.api_team_game_stats import ApiTeamGameStats
 
 
 @dataclass
-class TeamGameStats(Base, Model):
+class TeamGameStats(Base, DbModel):
     __tablename__ = 'team_game_stats'
 
-    id: str = Column(String(64), primary_key=True, index=True)
+    id: str = Column(String(64), primary_key=True, index=True, unique=True)
     created_at: datetime = Column(DateTime(), default=datetime.now)
     updated_at: datetime = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
-    game_id: str = Column(String(16), ForeignKey('games.id'), index=True, unique=True)
+    season_type_id: str = Column(String(3))
+    season_type: str = Column(String(32))
+    season: str = Column(String(16))
+    game_id: str = Column(String(16), ForeignKey('games.id'), index=True)
     team_id: int = Column(Integer(), ForeignKey('teams.team_id'), index=True)
     opponent_team_id: int = Column(Integer(), ForeignKey('teams.team_id'), index=True)
     team: str = Column(String(3))
     opponent_team: str = Column(String(3))
     game_date: datetime = Column(DateTime())
-    season: str = Column(String(8))
     home_team: str = Column(String(3))
     home_team_id: int = Column(Integer(), ForeignKey('teams.team_id'))
     away_team_id: int = Column(Integer(), ForeignKey('teams.team_id'))
@@ -64,10 +66,11 @@ class TeamGameStats(Base, Model):
 
     @staticmethod
     def create_from_api_model(api_model: ApiTeamGameStats):
-        id = f"{api_model.team_id}_{api_model.game_id}"
-        return TeamGameStats(id=id, team_id=api_model.team_id, game_id=api_model.game_id, team=api_model.team,
+        stat_id = f"{api_model.team_id}_{api_model.game_id}"
+        return TeamGameStats(id=stat_id, team_id=api_model.team_id, game_id=api_model.game_id, team=api_model.team,
                              game_date=api_model.game_date, home_team_id=api_model.home_team_id,
                              home_team=api_model.home_team, away_team_id=api_model.away_team_id,
+                             season_type_id=api_model.season_type_id, season_type=api_model.season_type,
                              away_team=api_model.away_team, result=api_model.result, points=api_model.points,
                              opponent_team=api_model.opponent_team, opponent_points=api_model.opponent_points,
                              opponent_team_id=api_model.opponent_team_id, score=api_model.score,

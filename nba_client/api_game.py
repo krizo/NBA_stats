@@ -1,10 +1,11 @@
 from datetime import datetime
 
-from nba_api.stats.endpoints import BoxScoreSummaryV2
+from nba_api.stats.endpoints import BoxScoreSummaryV2, BoxScoreMiscV2
 from retry import retry
 
 from db.schema.db_team import Team
 from nba_client.season import Season
+from nba_client.season_type import SeasonType
 
 
 class ApiGame:
@@ -13,6 +14,14 @@ class ApiGame:
     def __init__(self, game_id: str):
         self.game_id = game_id
         self._inf = None
+
+    @property
+    def season_type_id(self) -> str:
+        return self.game_id[:3]
+
+    @property
+    def season_type(self) -> str:
+        return str(SeasonType(self.season_type_id))
 
     @property
     def _box_score_summary(self) -> dict:
@@ -104,6 +113,6 @@ class ApiGame:
             return None
 
     @staticmethod
-    @retry(tries=10, delay=30)
+    @retry(tries=10, delay=10)
     def get_box_score_summary_v2(game_id: str):
         return BoxScoreSummaryV2(game_id=game_id).get_normalized_dict()

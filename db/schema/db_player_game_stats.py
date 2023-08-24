@@ -4,14 +4,14 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Float, Boolean
 
 from db.schema.db_team import Base
-from db.schema.db_model import Model
+from db.schema.db_model import DbModel
 from helpers.logger import Log
 from nba_client.api_player_game_stats import ApiPlayerGameStats
 from nba_client.api_team_game_stats import ApiTeamGameStats
 
 
 @dataclass
-class PlayerGameStats(Base, Model):
+class PlayerGameStats(Base, DbModel):
     __tablename__ = 'player_game_stats'
 
     id: str = Column(String(64), primary_key=True, index=True)
@@ -20,6 +20,9 @@ class PlayerGameStats(Base, Model):
     game_id: str = Column(String(16), ForeignKey('games.id'), index=True)
     player_id: int = Column(Integer(), ForeignKey('players.player_id'), index=True)
     team_id: int = Column(Integer(), ForeignKey('teams.team_id'), index=True)
+    season_type_id: str = Column(String(3))
+    season_type: str = Column(String(32))
+    season: str = Column(String(16))
     home_team_id: int = Column(Integer(), ForeignKey('teams.team_id'))
     away_team_id: int = Column(Integer(), ForeignKey('teams.team_id'))
     opponent_team_id: int = Column(Integer(), ForeignKey('teams.team_id'), index=True)
@@ -28,7 +31,6 @@ class PlayerGameStats(Base, Model):
     home_team: str = Column(String(3))
     away_team: str = Column(String(3))
     game_date: datetime = Column(DateTime())
-    season: str = Column(String(8))
     team_points: int = Column(Integer())
     player_name: str = Column(String(128))
     score: str = Column(String(8))
@@ -58,12 +60,14 @@ class PlayerGameStats(Base, Model):
 
     @staticmethod
     def create_from_api_model(api_model: ApiPlayerGameStats):
-        id = f"{api_model.player_id}_{api_model.game_id}"
-        return PlayerGameStats(id=id, player_id=api_model.player_id, team_id=api_model.team_id, game_id=api_model.game_id,
-                               team=api_model.team, game_date=api_model.game_date, home_team_id=api_model.home_team_id,
-                               home_team=api_model.home_team, away_team_id=api_model.away_team_id,
-                               away_team=api_model.away_team, opponent_team_id=api_model.opponent_team_id,
-                               season=api_model.season, result=api_model.result, team_points=api_model.team_points,
+        stat_id = f"{api_model.player_id}_{api_model.game_id}"
+        return PlayerGameStats(id=stat_id, player_id=api_model.player_id, team_id=api_model.team_id,
+                               game_id=api_model.game_id, season_type_id=api_model.season_type_id,
+                               season_type=api_model.season_type, team=api_model.team, game_date=api_model.game_date,
+                               home_team_id=api_model.home_team_id, home_team=api_model.home_team,
+                               away_team_id=api_model.away_team_id, away_team=api_model.away_team,
+                               opponent_team_id=api_model.opponent_team_id, season=api_model.season,
+                               result=api_model.result, team_points=api_model.team_points,
                                player_name=api_model.player_name, points=api_model.points,
                                opponent_team=api_model.opponent_team, opponent_points=api_model.opponent_points,
                                score=api_model.score, played_at_home=api_model.played_at_home,
@@ -79,5 +83,5 @@ class PlayerGameStats(Base, Model):
     @staticmethod
     def fetch(player_id: int, game_id) -> "PlayerGameStats":
         from db.database import Database
-        return Database.fetch_one(PlayerGameStats, PlayerGameStats.player_id == player_id and
+        return Database.fetch_one(PlayerGameStats, PlayerGameStats.player_id == player_id,
                                   PlayerGameStats.game_id == game_id)

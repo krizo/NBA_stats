@@ -1,3 +1,5 @@
+import datetime
+
 from nba_api.stats.static import teams, players
 
 from db.database import Database
@@ -34,6 +36,7 @@ class Crawler:
 
     @classmethod
     def get_full_data_for_season(cls, season: Season, test_mode: bool = False, ignored_teams: [str] = None):
+        start_time = datetime.datetime.now()
         players_persisted, games_persisted, players_stats_persisted, teams_stats_persisted = 0, 0, 0, 0
         games_ignored = []
         ignored_teams = ignored_teams or []
@@ -78,7 +81,10 @@ class Crawler:
                         players_stats_persisted += 1
                 Log.info(f"\t\t----- Game {api_game.game_id} done -----")
             Log.info(f"\t----- Team {team.name} done -----")
+        end_time = datetime.datetime.now()
         Log.info(f"----- Season {season.name} done -----")
+        Log.info(f"Start time: {start_time}")
+        Log.info(f"End time: {end_time}")
         Log.info(f"Players added: {players_persisted}")
         Log.info(f"Games added: {games_persisted}")
         Log.info(f"Games ignored ({len(games_ignored)}: {', '.join(games_ignored)}")
@@ -86,8 +92,8 @@ class Crawler:
         Log.info(f"Player stats added: {players_stats_persisted}")
 
 
-Database.recreate_database()
-Crawler.persist_teams()
+# Database.recreate_database()
+# Crawler.persist_teams()
 # ignore_teams = ['ATL', 'BOS', 'CLE', 'NOP', 'CHI', 'DAL', 'DEN', 'GSW', 'HOU']
 ignore_teams = None
 Crawler.get_full_data_for_season(season=Season(start_year=2022), test_mode=True, ignored_teams=ignore_teams)

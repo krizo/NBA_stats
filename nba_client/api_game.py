@@ -26,7 +26,7 @@ class ApiGame:
     @property
     def _box_score_summary(self) -> dict:
         if self._inf is None:
-            self._inf = self.get_box_score_summary_v2(game_id=self.game_id)
+            self._inf = self._get_box_score_summary_v2(game_id=self.game_id)
         return self._inf
 
     @property
@@ -114,5 +114,5 @@ class ApiGame:
 
     @staticmethod
     @retry(tries=10, delay=10)
-    def get_box_score_summary_v2(game_id: str):
+    def _get_box_score_summary_v2(game_id: str):
         return BoxScoreSummaryV2(game_id=game_id).get_normalized_dict()

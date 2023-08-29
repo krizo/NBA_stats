@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from nba_api.stats.endpoints import BoxScoreSummaryV2, BoxScoreMiscV2
+from nba_api.stats.endpoints import BoxScoreSummaryV2, BoxScoreMiscV2, leaguegamefinder
 from retry import retry
 
 from db.schema.db_team import Team
+from helpers.logger import Log
 from nba_client.season import Season
 from nba_client.season_type import SeasonType
 
@@ -39,12 +40,18 @@ class ApiGame:
         return data[0] if data else None
 
     @property
+    def _other_stats(self) -> dict or None:
+        if self._box_score_summary:
+            return self._box_score_summary.get('OtherStats')
+        return None
+
+    @property
     def home_team_id(self) -> int:
         return self._summary.get('HOME_TEAM_ID') if self._summary else None
 
     @property
     def home_team(self) -> str:
-        return Team.fetch_by_id(self.home_team_id).abbreviation if self.home_team_id else None
+        return self._get_team_short_name(self.home_team_id)
 
     @property
     def away_team_id(self) -> int:
@@ -52,7 +59,13 @@ class ApiGame:
 
     @property
     def away_team(self) -> str:
-        return Team.fetch_by_id(self.away_team_id).abbreviation if self.away_team_id else None
+        return self._get_team_short_name(self.away_team_id)
+
+    def _get_team_short_name(self, team_id):
+        other_stats = self._get_team_stats(stats=self._other_stats, team_id=team_id)
+        if not other_stats:
+            Log.warning(f"Can't find team short name by id: {team_id}")
+        return other_stats.get('TEAM_ABBREVIATION') if other_stats else None
 
     @property
     def _scores(self) -> dict or None:
@@ -104,6 +117,11 @@ class ApiGame:
         if self.home_team_points > self.away_team_points:
             return self.home_team
         return self.away_team
+
+    @staticmethod
+    def get_games(season: Season) -> [dict]:
+        game_finder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name, league_id_nullable='00')
+        return game_finder.get_normalized_dict().get('LeagueGameFinderResults')
 
     @staticmethod
     def _get_team_stats(stats: list[dict], team_id: int) -> dict or None:

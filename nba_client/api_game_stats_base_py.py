@@ -3,7 +3,6 @@ from abc import abstractmethod
 from nba_api.stats.endpoints import BoxScoreTraditionalV2
 from retry import retry
 
-from db.schema.db_team import Team
 from nba_client.api_game import ApiGame
 
 
@@ -44,14 +43,8 @@ class ApiGameStatsBase(ApiGame):
         return None
 
     @property
-    def _other_stats(self) -> dict or None:
-        if self._box_score_summary:
-            return self._get_team_stats(stats=self._box_score_summary.get('OtherStats'), team_id=self.team_id)
-        return None
-
-    @property
     def team(self) -> str:
-        return Team.fetch_by_id(self.team_id).abbreviation
+        return self._get_team_short_name(self.team_id)
 
     @property
     def opponent_team_id(self) -> int:
@@ -61,7 +54,7 @@ class ApiGameStatsBase(ApiGame):
 
     @property
     def opponent_team(self) -> str:
-        return Team.fetch_by_id(self.opponent_team_id).abbreviation
+        return self._get_team_short_name(self.opponent_team_id)
 
     @property
     def team_points(self) -> int:

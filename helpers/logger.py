@@ -18,6 +18,10 @@ class Log:
         cls.get_logger().info(message)
 
     @classmethod
+    def debug(cls, message):
+        cls.get_logger().debug(message)
+
+    @classmethod
     def warning(cls, message):
         cls.get_logger().warning(message)
 

@@ -2,3 +2,4 @@
 .idea/
 __pycache__/
 db_credentials.yml
+/.ipynb_checkpoints/requirements-checkpoint.txt

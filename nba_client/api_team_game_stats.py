@@ -20,21 +20,25 @@ class ApiTeamGameStats(ApiGameStatsBase):
         return self._other_stats.get('PTS_2ND_CHANCE') if self._other_stats else None
 
     @property
+    def _other_team_stats(self):
+        return self._get_team_stats(stats=self._box_score_summary.get('OtherStats'), team_id=self.team_id)
+
+    @property
     def largest_lead(self) -> int:
-        return self._other_stats.get('LARGEST_LEAD') if self._other_stats else None
+        return self._other_team_stats.get('LARGEST_LEAD') if self._other_team_stats else None
 
     @property
     def lead_changes(self) -> int:
-        return self._other_stats.get('LEAD_CHANGES') if self._other_stats else None
+        return self._other_team_stats.get('LEAD_CHANGES') if self._other_team_stats else None
 
     @property
     def times_tied(self) -> int:
-        return self._other_stats.get('TIMES_TIED') if self._other_stats else None
+        return self._other_team_stats.get('TIMES_TIED') if self._other_team_stats else None
 
     @property
     def points_off_to(self) -> int:
         """ The number of points scored by a team following an opponent's turnover """
-        return self._other_stats.get('PTS_OFF_TO') if self._other_stats else None
+        return self._other_team_stats.get('PTS_OFF_TO') if self._other_team_stats else None
 
     @property
     def minutes(self) -> int:

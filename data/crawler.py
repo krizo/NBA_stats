@@ -17,6 +17,7 @@ from nba_client.api_player_game_stats import ApiPlayerGameStats
 from nba_client.api_team import ApiTeam
 from nba_client.api_team_game_stats import ApiTeamGameStats
 from nba_client.season import Season
+from nba_client.season_type import SeasonType
 
 
 class Crawler:
@@ -95,19 +96,24 @@ class Crawler:
         Log.info(f"Player stats added: {players_stats_persisted}")
 
     @classmethod
-    def get_play_by_play_data_for_season(cls, season: Season):
+    def get_play_by_play_data_for_season(cls, season: Season, ignore_season_types: [] = None):
         start_time = datetime.datetime.now()
         Log.info(f"Getting Play by Play data for all games in season {season}")
         season_games = ApiGame.get_games(season=season)
         Log.info(f"{int(len(season_games) / 2)} games found in season {season}.")
         records_added = 0
         game_ids_done, games_ignored = [], []
+
         for game_counter, api_game in enumerate(season_games):
             game_id = api_game.get('GAME_ID')
             if game_id in game_ids_done:
                 continue  # games are duplicated (fe: LAL:CHI -> CHI:LAL)
             try:
                 game = Game.create_from_api_model(ApiGame(game_id))
+                if game.season_type_id in ignore_season_types:
+                    Log.info(f"Ignoring {game.matchup} because it's {game.season_type} type")
+                    games_ignored.append(game_id)
+                    continue
                 Log.info(f"\t#{game_counter} Creating Play by Play records for game {game_id}: {game.matchup}")
                 play_by_plays_records = ApiPlayByPlay.get_play_by_play_records(game_id=game.id,
                                                                                home_team_id=game.home_team_id,
@@ -132,12 +138,45 @@ class Crawler:
         Log.info(f"Start time: {start_time}")
         Log.info(f"End time: {end_time}")
         Log.info(f"Records added: {records_added}")
+        Log.info(f"Games ignored: {', '.join(games_ignored)}")
+
+    @classmethod
+    def get_season_player_shots(cls, season: Season):
+        start_time = datetime.datetime.now()
+        Log.info(f"Getting Play by Play data for all games in season {season}")
+        games_ignored = []
+        games_persisted = 0
+        for team in Team.fetch_all():
+            season_games = ApiTeamGameStats.get_team_games(team_id=team.team_id, season=season)
+            Log.info(f"\t{team.name} played {len(season_games)} games in season {season.name}")
+            for index, team_game in enumerate(season_games):
+                api_game = ApiGame(game_id=team_game.get('GAME_ID'))
+                try:
+                    game = Game.create_from_api_model(api_game)
+                except (AttributeError, ValueError) as ex:
+                    Log.error(ex)
+                    games_ignored.append(api_game.game_id)
+                    continue
+                Log.info(f"\t\tGame #{index + 1}: {api_game.game_id} - {game.matchup}")
+                if not Game.fetch_by_id(game_id=api_game.game_id):
+                    game.persist()
+                    games_persisted += 1
+                api_game_stats = ApiTeamGameStats(game_id=api_game.game_id, team_id=team.team_id)
+                for player_id in api_game_stats.team_player_ids:
+                    from nba_api.stats.endpoints import ShotChartDetail
+                    date = api_game_stats.game_date
+                    b = ShotChartDetail(player_id=player_id, team_id=team.team_id, season_nullable=season.name,
+                                        opponent_team_id=api_game_stats.opponent_team_id,
+                                        date_from_nullable=datetime.datetime(2022, 11, 16), date_to_nullable=datetime.datetime(2022, 11, 16)).get_normalized_dict()
+                    pass
+        pass
 
 
 # Database.recreate_database()
 # Crawler.persist_teams()
 # ignore_teams = ['ATL', 'BOS', 'CLE', 'NOP', 'CHI', 'DAL', 'DEN', 'GSW', 'HOU']
-# ignore_teams = None
-# Crawler.get_full_data_for_season(season=Season(start_year=2022), test_mode=True, ignored_teams=ignore_teams)
-Database.create_table(PlayByPlay)
-Crawler.get_play_by_play_data_for_season(season=Season(start_year=2022))
+ignore_teams = None
+# Crawler.get_full_data_for_season(season=Season(start_year=2021), test_mode=True, ignored_teams=ignore_teams)
+# ignore_season_types = [SeasonType('003').season_id, SeasonType('001').season_id] # ignoring all star and pre-season
+# Crawler.get_play_by_play_data_for_season(season=Season(start_year=2022), ignore_season_types=ignore_season_types)
+Crawler.get_season_player_shots(season=Season(start_year=2022))

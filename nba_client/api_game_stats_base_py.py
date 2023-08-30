@@ -78,13 +78,6 @@ class ApiGameStatsBase(ApiGame):
         return self.home_team_id == self.team_id
 
     @staticmethod
-    def _get_team_stats(stats: list[dict], team_id: int = None) -> dict or None:
-        try:
-            return next(s for s in stats if s['TEAM_ID'] == team_id)
-        except StopIteration:
-            return None
-
-    @staticmethod
     @retry(tries=10, delay=10)
     def get_box_score_tradition(game_id: str):
         return BoxScoreTraditionalV2(game_id).get_normalized_dict()

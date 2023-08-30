@@ -13,11 +13,11 @@ class ApiPlayer:
     def __init__(self, first_name: str = None, last_name: str = None, player_id: int = None):
         self.first_name = first_name
         self.last_name = last_name
-        self._player_data: dict = None
+        self._player_data: dict or None = None
         if self.first_name and self.last_name:
             self._player_data = self._get_player_by_name(self.first_name, self.last_name)
         elif player_id:
-            self._player_data = self._get_player_by_id(player_id)
+            self._player_data = self.get_player_by_id(player_id)
             if self._player_data:
                 self.first_name = self._player_data.get("first_name")
                 self.last_name = self._player_data.get("last_name")
@@ -59,7 +59,7 @@ class ApiPlayer:
         return ApiPlayer._get_additional_stats(player_data)
 
     @staticmethod
-    def _get_player_by_id(player_id: int) -> dict or None:
+    def get_player_by_id(player_id: int) -> dict or None:
         player_found = players.find_player_by_id(player_id=player_id)
         if not player_found:
             return None

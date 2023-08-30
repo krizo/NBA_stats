@@ -1,8 +1,10 @@
+from nba_api.stats.endpoints import PlayerIndex
 from nba_api.stats.static import teams
 from retry import retry
 
 from helpers.helpers import find_in_collection
 from nba_client.models.team_model import TeamModel
+from nba_client.season import Season
 
 
 class ApiTeam:
@@ -47,5 +49,14 @@ class ApiTeam:
         return cls._teams_cached
 
     @classmethod
+    def get_team_by_id(cls, team_id: int):
+        return find_in_collection(collection=cls.get_teams(), attribute='id', expected_value=team_id)
+
+    @classmethod
     def get_abbreviations(cls) -> [str]:
         return [team.get('abbreviation') for team in cls.get_teams()]
+
+    @classmethod
+    def get_players(cls, team_id: int, season: Season) -> [dict]:
+        player_index = PlayerIndex(team_id_nullable=team_id, season=season.name).get_normalized_dict()
+        return player_index.get('PlayerIndex') if player_index else None

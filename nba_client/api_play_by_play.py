@@ -154,8 +154,8 @@ class ApiPlayByPlay:
         cls._cached_data.pop(game_id)
 
     @classmethod
-    def get_play_by_play_records(cls, game_id: str, game_date: datetime, home_team_id: int,
-                                 away_team_id: int, home_team: str, away_team: str) -> ["ApiPlayByPlay"]:
+    def create_play_by_play_records(cls, game_id: str, game_date: datetime, home_team_id: int,
+                                    away_team_id: int, home_team: str, away_team: str) -> ["ApiPlayByPlay"]:
         return [
             ApiPlayByPlay(game_id=game_id, game_date=game_date, home_team_id=home_team_id, away_team_id=away_team_id,
                           play_by_play=pbp, home_team=home_team, away_team=away_team) for pbp in

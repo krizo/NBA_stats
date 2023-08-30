@@ -8,6 +8,7 @@ from sqlalchemy.orm.base import instance_dict
 from db.schema.db_game import Game
 from db.schema.db_play_by_play import PlayByPlay
 from db.schema.db_player_game_stats import PlayerGameStats
+from db.schema.db_player_shots import PlayerShots
 from db.schema.db_team import Team
 from db.schema.db_team_game_stats import TeamGameStats
 from db.schema.db_player import Player
@@ -40,7 +41,7 @@ class Database:
 
     @classmethod
     def create_tables(cls):
-        for table in [Team, Player, Game, TeamGameStats, PlayerGameStats, PlayByPlay]:
+        for table in [Team, Player, Game, TeamGameStats, PlayerGameStats, PlayByPlay, PlayerShots]:
             cls.create_table(table)
 
     @classmethod

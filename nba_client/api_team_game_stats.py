@@ -13,11 +13,11 @@ class ApiTeamGameStats(ApiGameStatsBase):
 
     @property
     def points_paint(self) -> int:
-        return self._other_stats.get('PTS_PAINT') if self._other_stats else None
+        return self._other_team_stats.get('PTS_PAINT') if self._other_stats else None
 
     @property
     def points_2nd_chance(self) -> int:
-        return self._other_stats.get('PTS_2ND_CHANCE') if self._other_stats else None
+        return self._other_team_stats.get('PTS_2ND_CHANCE') if self._other_stats else None
 
     @property
     def _other_team_stats(self):

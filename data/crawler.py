@@ -176,8 +176,8 @@ class Crawler:
 # Crawler.persist_teams()
 # ignore_teams = ['ATL', 'BOS', 'CLE', 'NOP', 'CHI', 'DAL', 'DEN', 'GSW', 'HOU']
 ignore_teams = None
-# Crawler.get_full_data_for_season(season=Season(start_year=2021), test_mode=True, ignored_teams=ignore_teams)
+season_start = 2021
+Crawler.get_full_data_for_season(season=Season(start_year=season_start), test_mode=False, ignored_teams=ignore_teams)
 # ignore_season_types = [SeasonType('003').season_id, SeasonType('001').season_id] # ignoring all star and pre-season
-# Crawler.get_play_by_play_data_for_season(season=Season(start_year=2022), ignore_season_types=ignore_season_types)
-Database.create_table(PlayerShots)
-Crawler.get_season_player_shots(season=Season(start_year=2022))
+# Crawler.get_play_by_play_data_for_season(season=Season(start_year=season_start), ignore_season_types=ignore_season_types)
+# Crawler.get_season_player_shots(season=Season(start_year=season_start))

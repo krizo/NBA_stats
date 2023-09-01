@@ -45,11 +45,11 @@ class Crawler:
         players_persisted, games_persisted, players_stats_persisted, teams_stats_persisted = 0, 0, 0, 0
         games_ignored = []
         ignored_teams = ignored_teams or []
-        for team in Team.fetch_all():
+        for team_index, team in enumerate(Team.fetch_all()):
             if team.abbreviation in ignored_teams or None:
                 continue
 
-            Log.info(f"\tTeam: {team.name}")
+            Log.info(f"\t#{team_index + 1}Team: {team.name}")
             season_games = ApiTeamGameStats.get_team_games(team_id=team.team_id, season=season)
             season_games = season_games if test_mode else season_games
             Log.info(f"\t{team.name} played {len(season_games)} games in season {season.name}")
@@ -140,15 +140,15 @@ class Crawler:
         Log.info(f"Start time: {start_time}")
         Log.info(f"End time: {end_time}")
         Log.info(f"Records added: {records_added}")
-        Log.info(f"Games ignored: {', '.join(games_ignored)}")
+        Log.info(f"Games ignored: {', '.join(games_ignored)} ({len(games_ignored)}")
 
     @classmethod
     def get_season_player_shots(cls, season: Season):
         start_time = datetime.datetime.now()
         Log.info(f"Getting Player Shots data for all games in season {season}")
         shot_records_persisted = 0
-        for team in Team.fetch_all():
-            Log.info(f"\tTeam: {team.name}")
+        for team_index, team in enumerate(Team.fetch_all()):
+            Log.info(f"\t#{team_index + 1}Team: {team.name}")
             players = ApiTeam.get_players(team_id=team.team_id, season=season)
             for player_index, player in enumerate(players):
                 player_name = f"{player.get('PLAYER_FIRST_NAME')} {player.get('PLAYER_LAST_NAME')}"
@@ -177,7 +177,7 @@ class Crawler:
 # ignore_teams = ['ATL', 'BOS', 'CLE', 'NOP', 'CHI', 'DAL', 'DEN', 'GSW', 'HOU']
 ignore_teams = None
 season_start = 2021
-Crawler.get_full_data_for_season(season=Season(start_year=season_start), test_mode=False, ignored_teams=ignore_teams)
-# ignore_season_types = [SeasonType('003').season_id, SeasonType('001').season_id] # ignoring all star and pre-season
+# Crawler.get_full_data_for_season(season=Season(start_year=season_start), test_mode=False, ignored_teams=ignore_teams)
+ignore_season_types = [SeasonType('003').season_id, SeasonType('001').season_id]  # ignoring all star and pre-season
 # Crawler.get_play_by_play_data_for_season(season=Season(start_year=season_start), ignore_season_types=ignore_season_types)
-# Crawler.get_season_player_shots(season=Season(start_year=season_start))
+Crawler.get_season_player_shots(season=Season(start_year=season_start))

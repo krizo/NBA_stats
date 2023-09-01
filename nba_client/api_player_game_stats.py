@@ -132,7 +132,7 @@ class ApiPlayerGameStats(ApiGameStatsBase):
     def score(self) -> str:
         return f"{self.team_points}:{self.opponent_points}"
 
-    def _get_player_stats(self, stats: list[dict]) -> dict or None:
+    def _get_player_stats(self, stats: [dict]) -> dict or None:
         try:
             return next(s for s in stats if s['PLAYER_ID'] == self.player_id)
         except StopIteration:

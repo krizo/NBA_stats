@@ -124,7 +124,7 @@ class ApiGame:
         return game_finder.get_normalized_dict().get('LeagueGameFinderResults')
 
     @staticmethod
-    def _get_team_stats(stats: list[dict], team_id: int) -> dict or None:
+    def _get_team_stats(stats: [dict], team_id: int) -> dict or None:
         try:
             return next(s for s in stats if s['TEAM_ID'] == team_id)
         except StopIteration:

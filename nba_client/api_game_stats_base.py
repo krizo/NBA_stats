@@ -3,6 +3,7 @@ from abc import abstractmethod
 from nba_api.stats.endpoints import BoxScoreTraditionalV2
 from retry import retry
 
+from nba_client.api_client_config import RETRY_DELAY, RETRY_ATTEMPTS
 from nba_client.api_game import ApiGame
 
 
@@ -78,6 +79,6 @@ class ApiGameStatsBase(ApiGame):
         return self.home_team_id == self.team_id
 
     @staticmethod
-    @retry(tries=10, delay=10)
+    @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
     def get_box_score_tradition(game_id: str):
         return BoxScoreTraditionalV2(game_id).get_normalized_dict()

@@ -8,6 +8,7 @@ from requests import ReadTimeout
 from retry import retry
 
 from helpers.logger import Log
+from nba_client.api_client_config import RETRY_ATTEMPTS, RETRY_DELAY
 from nba_client.season import Season
 from nba_client.season_type import SeasonType
 
@@ -163,11 +164,11 @@ class ApiPlayByPlay:
 
     @staticmethod
     def _make_play_by_play_request(game_id: str):
-        @retry(exceptions=(ReadTimeout, ConnectionError), tries=5, delay=10)
+        @retry(exceptions=(ReadTimeout, ConnectionError), tries=RETRY_ATTEMPTS, delay=RETRY_DELAY)
         def _make_play_by_play_request_v1():
             return PlayByPlay(game_id=game_id).get_normalized_dict()
 
-        @retry(exceptions=(ReadTimeout, ConnectionError), tries=5, delay=10)
+        @retry(exceptions=(ReadTimeout, ConnectionError), tries=RETRY_ATTEMPTS, delay=RETRY_DELAY)
         def _make_play_by_play_request_v2():
             return PlayByPlayV2(game_id=game_id).get_normalized_dict()
 

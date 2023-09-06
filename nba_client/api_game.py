@@ -5,6 +5,7 @@ from retry import retry
 
 from db.schema.db_team import Team
 from helpers.logger import Log
+from nba_client.api_client_config import RETRY_ATTEMPTS, RETRY_DELAY
 from nba_client.season import Season
 from nba_client.season_type import SeasonType
 
@@ -131,6 +132,6 @@ class ApiGame:
             return None
 
     @staticmethod
-    @retry(tries=10, delay=10)
+    @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
     def _get_box_score_summary_v2(game_id: str):
         return BoxScoreSummaryV2(game_id=game_id).get_normalized_dict()

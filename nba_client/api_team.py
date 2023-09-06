@@ -3,6 +3,7 @@ from nba_api.stats.static import teams
 from retry import retry
 
 from helpers.helpers import find_in_collection
+from nba_client.api_client_config import RETRY_ATTEMPTS, RETRY_DELAY
 from nba_client.models.team_model import TeamModel
 from nba_client.season import Season
 
@@ -42,7 +43,7 @@ class ApiTeam:
         return find_in_collection(collection=cls.get_teams(), attribute='abbreviation', expected_value=abbreviation)
 
     @classmethod
-    @retry(tries=10, delay=10)
+    @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
     def get_teams(cls) -> [dict]:
         if cls._teams_cached is None:
             cls._teams_cached = teams.get_teams()

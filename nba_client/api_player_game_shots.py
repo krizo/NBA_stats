@@ -4,6 +4,7 @@ from nba_api.stats.endpoints import ShotChartDetail
 from requests import ReadTimeout
 from retry import retry
 
+from nba_client.api_client_config import RETRY_DELAY, RETRY_ATTEMPTS
 from nba_client.api_team import ApiTeam
 from nba_client.season import Season
 
@@ -107,13 +108,13 @@ class ApiPlayerSeasonShots:
         return datetime.strptime(game_date, '%Y%m%d') if game_date else None
 
     @staticmethod
-    @retry(exceptions=ReadTimeout, tries=5, delay=10)
+    @retry(exceptions=ReadTimeout, tries=RETRY_ATTEMPTS, delay=RETRY_DELAY)
     def _get_player_shots_for_game(player_id: int, team_id: int, season: Season):
         response = ShotChartDetail(player_id=player_id, team_id=team_id,
                                    season_nullable=season.name, context_measure_simple='FGA').get_normalized_dict()
         return response['Shot_Chart_Detail'] if response else response
 
     @classmethod
-    @retry(exceptions=ReadTimeout, tries=5, delay=10)
+    @retry(exceptions=ReadTimeout, tries=RETRY_ATTEMPTS, delay=RETRY_DELAY)
     def fetch_player_shots_records_from_nba(cls, player_id: int, team_id: int, season: Season):
         return  cls._get_player_shots_for_game(player_id=player_id, team_id=team_id, season=season)

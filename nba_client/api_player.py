@@ -5,6 +5,7 @@ from nba_api.stats.static import players
 from retry import retry
 
 from helpers.helpers import lists_to_dict, convert_to_metric
+from nba_client.api_client_config import RETRY_DELAY, RETRY_ATTEMPTS
 
 
 class ApiPlayer:
@@ -47,7 +48,7 @@ class ApiPlayer:
 
     @staticmethod
     def _get_player_by_name(first_name: str, last_name: str) -> dict:
-        @retry(tries=10, delay=10)
+        @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
         def get_players():
             return players.find_players_by_full_name(f'{first_name} {last_name}')
 
@@ -67,7 +68,7 @@ class ApiPlayer:
 
     @staticmethod
     def _get_additional_stats(player_data):
-        @retry(tries=10, delay=10)
+        @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
         def _get_common_data(player_id: int):
             return commonplayerinfo.CommonPlayerInfo(player_id=player_id).common_player_info.get_dict()
 

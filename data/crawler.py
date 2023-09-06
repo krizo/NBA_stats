@@ -172,13 +172,10 @@ class Crawler:
         Log.info(f"Shot records persisted: {shot_records_persisted}")
 
 
+# Database.recreate_database()
+# Crawler.persist_teams()
 for season_start in [2021, 2020, 2019, 2018]:
-    # Database.recreate_database()
-    # Crawler.persist_teams()
-    # ignore_teams = ['ATL', 'BOS', 'CLE', 'NOP', 'CHI', 'DAL', 'DEN', 'GSW', 'HOU']
-    ignore_teams = None
-    # season_start = 2020
-    Crawler.get_full_data_for_season(season=Season(start_year=season_start), test_mode=False, ignored_teams=ignore_teams)
+    Crawler.get_full_data_for_season(season=Season(start_year=season_start))
     # ignore_season_types = [SeasonType('003').season_id, SeasonType('001').season_id]  # ignoring all star and pre-season
     # Crawler.get_play_by_play_data_for_season(season=Season(start_year=season_start), ignore_season_types=ignore_season_types)
     # Crawler.get_season_player_shots(season=Season(start_year=season_start))

@@ -37,6 +37,7 @@ class Database:
             table_name = table_entry[0]
             if table_name:
                 with cls.get_engine().begin() as conn:
+                    Log.info(f"Dropping table {table_name}")
                     conn.execute(text(f'DROP TABLE "{table_name}"'))
 
     @classmethod

@@ -9,7 +9,10 @@ class Log:
         if cls._logger is None:
             logger = logging.getLogger(__name__)
             format = '%(asctime)s:%(levelname)s: %(message)s'
-            logging.basicConfig(level=logging.INFO, format=format)
+            logging.basicConfig(level=logging.INFO, format=format, handlers=[
+                logging.FileHandler("debug.log"),
+                logging.StreamHandler()
+            ])
             cls._logger = logger
         return cls._logger
 

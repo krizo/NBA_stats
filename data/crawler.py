@@ -49,7 +49,7 @@ class Crawler:
             if team.abbreviation in ignored_teams or None:
                 continue
 
-            Log.info(f"\t#{team_index + 1}Team: {team.name} ({season})")
+            Log.info(f"\t#{team_index + 1} Team: {team.name} ({season})")
             season_games = ApiTeamGameStats.get_team_games(team_id=team.team_id, season=season)
             season_games = season_games if test_mode else season_games
             Log.info(f"\t{team.name} played {len(season_games)} games in season {season.name}")

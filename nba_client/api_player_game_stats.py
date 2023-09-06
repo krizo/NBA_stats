@@ -1,4 +1,4 @@
-from nba_client.api_game_stats_base_py import ApiGameStatsBase
+from nba_client.api_game_stats_base import ApiGameStatsBase
 
 
 class ApiPlayerGameStats(ApiGameStatsBase):

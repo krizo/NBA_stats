@@ -1,6 +1,6 @@
 from nba_api.stats.endpoints import leaguegamefinder
 
-from nba_client.api_game_stats_base_py import ApiGameStatsBase
+from nba_client.api_game_stats_base import ApiGameStatsBase
 from nba_client.season import Season
 
 

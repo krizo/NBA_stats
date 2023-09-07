@@ -39,6 +39,7 @@ class ApiTeam:
         return team
 
     @classmethod
+    @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
     def _get_team(cls, abbreviation: str) -> TeamModel or None:
         return find_in_collection(collection=cls.get_teams(), attribute='abbreviation', expected_value=abbreviation)
 
@@ -50,6 +51,7 @@ class ApiTeam:
         return cls._teams_cached
 
     @classmethod
+    @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
     def get_team_by_id(cls, team_id: int):
         return find_in_collection(collection=cls.get_teams(), attribute='id', expected_value=team_id)
 

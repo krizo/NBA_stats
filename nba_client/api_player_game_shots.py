@@ -117,4 +117,4 @@ class ApiPlayerSeasonShots:
     @classmethod
     @retry(exceptions=ReadTimeout, tries=RETRY_ATTEMPTS, delay=RETRY_DELAY)
     def fetch_player_shots_records_from_nba(cls, player_id: int, team_id: int, season: Season):
-        return  cls._get_player_shots_for_game(player_id=player_id, team_id=team_id, season=season)
+        return cls._get_player_shots_for_game(player_id=player_id, team_id=team_id, season=season)

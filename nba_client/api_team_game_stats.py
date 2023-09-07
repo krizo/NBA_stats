@@ -1,5 +1,7 @@
 from nba_api.stats.endpoints import leaguegamefinder
+from retry import retry
 
+from nba_client.api_client_config import RETRY_DELAY, RETRY_ATTEMPTS
 from nba_client.api_game_stats_base import ApiGameStatsBase
 from nba_client.season import Season
 
@@ -126,6 +128,7 @@ class ApiTeamGameStats(ApiGameStatsBase):
         return f"{self.points}:{self.opponent_points}"
 
     @staticmethod
+    @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
     def get_team_games(team_id: int, season: Season):
         game_finder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name, league_id_nullable='00',
                                                         team_id_nullable=team_id)

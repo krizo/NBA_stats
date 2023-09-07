@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from nba_api.stats.endpoints import BoxScoreSummaryV2, BoxScoreMiscV2, leaguegamefinder
+from nba_api.stats.endpoints import BoxScoreSummaryV2, leaguegamefinder
 from retry import retry
 
-from db.schema.db_team import Team
 from helpers.logger import Log
 from nba_client.api_client_config import RETRY_ATTEMPTS, RETRY_DELAY
 from nba_client.season import Season
@@ -120,6 +119,7 @@ class ApiGame:
         return self.away_team
 
     @staticmethod
+    @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
     def get_games(season: Season) -> [dict]:
         game_finder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name, league_id_nullable='00')
         return game_finder.get_normalized_dict().get('LeagueGameFinderResults')

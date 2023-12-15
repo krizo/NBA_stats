@@ -1,3 +1,6 @@
+import functools
+from datetime import datetime
+
 from nba_api.stats.endpoints import leaguegamefinder
 from retry import retry
 
@@ -129,9 +132,17 @@ class ApiTeamGameStats(ApiGameStatsBase):
 
     @staticmethod
     @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
-    def get_team_games(team_id: int, season: Season):
-        game_finder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name, league_id_nullable='00',
-                                                        team_id_nullable=team_id)
+    @functools.lru_cache(maxsize=1)
+    def get_team_games(team_id: int, season: Season, date_from: datetime = None, date_to: datetime = None):
+        if date_from:
+            date_from = date_from.strftime('%m/%d/%Y')
+        if date_to:
+            date_to = date_to.strftime('%m/%d/%Y')
+        game_finder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name,
+                                                        league_id_nullable='00',
+                                                        team_id_nullable=team_id,
+                                                        date_from_nullable=date_from,
+                                                        date_to_nullable=date_to)
         return game_finder.get_normalized_dict().get('LeagueGameFinderResults')
 
     @property

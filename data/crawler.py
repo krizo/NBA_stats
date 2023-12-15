@@ -40,7 +40,9 @@ class Crawler:
         return persisited_teams
 
     @classmethod
-    def get_full_data_for_season(cls, season: Season, test_mode: bool = False, ignored_teams: [str] = None):
+    def get_data_for_season(cls, season: Season, test_mode: bool = False, ignored_teams: [str] = None,
+                            date_from: datetime = None,
+                            date_to: datetime = None):
         start_time = datetime.datetime.now()
         players_persisted, games_persisted, players_stats_persisted, teams_stats_persisted = 0, 0, 0, 0
         games_ignored = []
@@ -50,9 +52,15 @@ class Crawler:
                 continue
 
             Log.info(f"\t#{team_index + 1} Team: {team.name} ({season})")
-            season_games = ApiTeamGameStats.get_team_games(team_id=team.team_id, season=season)
+            season_games = ApiTeamGameStats.get_team_games(team_id=team.team_id, season=season, date_from=date_from,
+                                                           date_to=date_to)
             season_games = season_games if test_mode else season_games
-            Log.info(f"\t{team.name} played {len(season_games)} games in season {season.name}")
+            if date_to and date_from:
+                Log.info(
+                    f"\t{team.name} played {len(season_games)} games in "
+                    f"timefrme {date_from.strftime('%m/%d/%Y')} - {date_to.strftime('%m/%d/%Y')}")
+            else:
+                Log.info(f"\t{team.name} played {len(season_games)} games in season {season.name}")
             for index, team_game in enumerate(season_games):
                 api_game = ApiGame(game_id=team_game.get('GAME_ID'))
                 try:
@@ -61,7 +69,8 @@ class Crawler:
                     Log.error(ex)
                     games_ignored.append(api_game.game_id)
                     continue
-                Log.info(f"\t\tGame #{index + 1}: {api_game.game_id} - {game.matchup}")
+                Log.info(
+                    f"\t\tGame #{index + 1}: {api_game.game_id} - {game.matchup} ({game.game_date.strftime('%d-%m-%Y')})")
                 if not Game.fetch_by_id(game_id=api_game.game_id):
                     game.persist()
                     games_persisted += 1
@@ -171,11 +180,33 @@ class Crawler:
         Log.info(f"End time: {end_time}")
         Log.info(f"Shot records persisted: {shot_records_persisted}")
 
+    @staticmethod
+    def get_data_from_timeframe(season_start: int, date_from: datetime, date_to: datetime):
+        Crawler.get_data_for_season(season=Season(start_year=season_start), date_from=date_from, date_to=date_to)
 
-# Database.recreate_database()
-# Crawler.persist_teams()
-for season_start in [2021, 2020, 2019, 2018]:
-    Crawler.get_full_data_for_season(season=Season(start_year=season_start))
-    # ignore_season_types = [SeasonType('003').season_id, SeasonType('001').season_id]  # ignoring all star and pre-season
-    # Crawler.get_play_by_play_data_for_season(season=Season(start_year=season_start), ignore_season_types=ignore_season_types)
-    # Crawler.get_season_player_shots(season=Season(start_year=season_start))
+    @staticmethod
+    def get_data_beginning_from_recently_persisted():
+        last_game_persisted = ApiGame.get_latest_game_persisted()
+        date_from = last_game_persisted.game_date
+        date_to = datetime.date.today()
+        Crawler.get_data_for_season(season=Season(start_year=season_start), date_from=date_from, date_to=date_to)
+
+    @staticmethod
+    def get_data_from_yesterday():
+        today = datetime.date.today()
+        yesterday = today - datetime.timedelta(days=1)
+        Crawler.get_data_from_timeframe(season_start=2023, date_from=yesterday, date_to=today)
+
+
+Database.recreate_database()
+Crawler.persist_teams()
+
+
+for season_start in [2023]:
+    Crawler.get_data_for_season(season=Season(start_year=season_start))
+    ignore_season_types = [SeasonType('003').season_id, SeasonType('001').season_id]  # ignoring all star and pre-season
+    Crawler.get_play_by_play_data_for_season(season=Season(start_year=season_start),
+                                             ignore_season_types=ignore_season_types)
+    Crawler.get_season_player_shots(season=Season(start_year=season_start))
+
+# Crawler.get_data_beginning_from_recently_persisted()

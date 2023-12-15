@@ -36,6 +36,11 @@ class Game(Base, DbModel):
         return Database.fetch_one(Game, Game.id == game_id)
 
     @staticmethod
+    def fetch_latest_match() -> "Game":
+        from db.database import Database
+        return Database.fetch_records_ordered_by(Game, Game.game_date.desc()).first()
+
+    @staticmethod
     def create_from_api_model(api_model: ApiGame):
         return Game(id=api_model.game_id, game_date=api_model.game_date, season_type_id=api_model.season_type_id,
                     season_type=api_model.season_type, season=api_model.season, home_team_id=api_model.home_team_id,

@@ -93,3 +93,8 @@ class Database:
     def fetch_all(cls, klass: object):
         with Session(cls.get_engine()) as session:
             return session.query(klass).all()
+
+    @classmethod
+    def fetch_records_ordered_by(cls, klass: object, order_by_column: str):
+        with Session(cls.get_engine()) as session:
+            return session.query(klass).order_by(order_by_column)

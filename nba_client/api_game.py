@@ -1,3 +1,4 @@
+import functools
 from datetime import datetime
 
 from nba_api.stats.endpoints import BoxScoreSummaryV2, leaguegamefinder
@@ -119,10 +120,18 @@ class ApiGame:
         return self.away_team
 
     @staticmethod
+    def get_latest_game_persisted() -> "Game":
+        from db.schema.db_game import Game
+        return Game.fetch_latest_match()
+
+    @staticmethod
     @retry(tries=RETRY_DELAY, delay=RETRY_ATTEMPTS)
+    @functools.lru_cache(maxsize=1)
     def get_games(season: Season) -> [dict]:
         game_finder = leaguegamefinder.LeagueGameFinder(season_nullable=season.name, league_id_nullable='00')
         return game_finder.get_normalized_dict().get('LeagueGameFinderResults')
+
+
 
     @staticmethod
     def _get_team_stats(stats: [dict], team_id: int) -> dict or None:
